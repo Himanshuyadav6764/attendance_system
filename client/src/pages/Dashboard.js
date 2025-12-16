@@ -18,10 +18,6 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchDashboardStats();
-  }, [fetchDashboardStats]);
-
   const fetchDashboardStats = useCallback(async () => {
     try {
       setLoading(true);
@@ -76,6 +72,10 @@ const Dashboard = () => {
       setLoading(false);
     }
   }, [isAdmin]);
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, [fetchDashboardStats]);
 
   const studentCards = [
     {

@@ -12,10 +12,6 @@ const AdminAttendance = () => {
     userId: ''
   });
 
-  useEffect(() => {
-    fetchAttendance();
-  }, [fetchAttendance]);
-
   const fetchAttendance = useCallback(async () => {
     try {
       setLoading(true);
@@ -33,6 +29,10 @@ const AdminAttendance = () => {
       setLoading(false);
     }
   }, [filters]);
+
+  useEffect(() => {
+    fetchAttendance();
+  }, [fetchAttendance]);
 
   const handleFilterChange = (e) => {
     setFilters({

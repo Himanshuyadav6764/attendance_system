@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { attendanceService } from '../services/attendanceService';
-import { useAuth } from '../context/AuthContext';
 import './StudentAttendance.css';
 
 const StudentAttendance = () => {

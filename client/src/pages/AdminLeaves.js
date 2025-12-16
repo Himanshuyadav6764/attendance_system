@@ -11,10 +11,6 @@ const AdminLeaves = () => {
   const [selectedLeave, setSelectedLeave] = useState(null);
   const [adminRemarks, setAdminRemarks] = useState('');
 
-  useEffect(() => {
-    fetchLeaves();
-  }, [fetchLeaves]);
-
   const fetchLeaves = useCallback(async () => {
     try {
       setLoading(true);
@@ -30,6 +26,10 @@ const AdminLeaves = () => {
       setLoading(false);
     }
   }, [filter]);
+
+  useEffect(() => {
+    fetchLeaves();
+  }, [fetchLeaves]);
 
   const handleUpdateStatus = async (leaveId, status) => {
     setProcessing(leaveId);
