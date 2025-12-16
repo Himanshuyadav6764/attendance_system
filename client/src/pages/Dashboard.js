@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { attendanceService } from '../services/attendanceService';
@@ -20,10 +20,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardStats();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchDashboardStats]);
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardStats = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -76,7 +75,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isAdmin]);
 
   const studentCards = [
     {

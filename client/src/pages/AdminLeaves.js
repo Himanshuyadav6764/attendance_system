@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { leaveService } from '../services/leaveService';
 import './AdminLeaves.css';
 
@@ -13,10 +13,9 @@ const AdminLeaves = () => {
 
   useEffect(() => {
     fetchLeaves();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  }, [fetchLeaves]);
 
-  const fetchLeaves = async () => {
+  const fetchLeaves = useCallback(async () => {
     try {
       setLoading(true);
       const params = filter ? { status: filter } : {};
@@ -30,7 +29,7 @@ const AdminLeaves = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
 
   const handleUpdateStatus = async (leaveId, status) => {
     setProcessing(leaveId);

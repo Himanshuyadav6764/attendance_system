@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { attendanceService } from '../services/attendanceService';
 import './AdminAttendance.css';
 
@@ -14,10 +14,9 @@ const AdminAttendance = () => {
 
   useEffect(() => {
     fetchAttendance();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchAttendance]);
 
-  const fetchAttendance = async () => {
+  const fetchAttendance = useCallback(async () => {
     try {
       setLoading(true);
       const params = {};
@@ -33,7 +32,7 @@ const AdminAttendance = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
   const handleFilterChange = (e) => {
     setFilters({
