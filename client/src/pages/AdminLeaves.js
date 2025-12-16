@@ -13,6 +13,7 @@ const AdminLeaves = () => {
 
   useEffect(() => {
     fetchLeaves();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
   const fetchLeaves = async () => {

@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import './StudentAttendance.css';
 
 const StudentAttendance = () => {
-  const { user } = useAuth();
   const [attendance, setAttendance] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
