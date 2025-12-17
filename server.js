@@ -3,71 +3,74 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-// Load environment variables
+// Load our secret keys and settings from .env file
 dotenv.config();
 
-// Import routes
-const authRoutes = require('./routes/authRoutes');
-const attendanceRoutes = require('./routes/attendanceRoutes');
-const leaveRoutes = require('./routes/leaveRoutes');
+// Bring in all the route files that handle different features
+const authRoutes = require('./routes/authRoutes'); // Login and signup
+const attendanceRoutes = require('./routes/attendanceRoutes'); // Student attendance marking
+const leaveRoutes = require('./routes/leaveRoutes'); // Leave applications
 
 const app = express();
 
-// Middleware
+// Setup middleware - these help our server understand requests
+// Allow requests from our React app (frontend)
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Help server understand JSON data sent from frontend
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Database connection
+// Connect to MongoDB database
 mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log('✅ MongoDB Connected Successfully'))
+.then(() => console.log('✅ Database connected successfully!'))
 .catch((err) => {
-  console.error('❌ MongoDB Connection Error:', err.message);
-  process.exit(1);
+  console.error('❌ Failed to connect to database:', err.message);
+  process.exit(1); // Stop the app if database won't connect
 });
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/leave', leaveRoutes);
+// Setup routes - different URLs for different features
+app.use('/api/auth', authRoutes); // Handles login/signup
+app.use('/api/attendance', attendanceRoutes); // Handles attendance marking
+app.use('/api/leave', leaveRoutes); // Handles leave requests
 
-// Health check route
+// Simple route to check if server is working
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
-    message: 'Server is running',
+    message: 'Server is running perfectly!',
     timestamp: new Date().toISOString()
   });
 });
 
-// Error handling middleware
+// Catch and handle any errors that happen
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
     success: false,
-    message: err.message || 'Internal Server Error',
+    message: err.message || 'Something went wrong on our server',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 });
 
-// 404 handler
+// Handle requests to URLs that don't exist
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: 'Route not found'
+    message: 'Page not found - this URL does not exist'
   });
 });
 
-// Start server
+// Start the server and make it listen for requests
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 module.exports = app;

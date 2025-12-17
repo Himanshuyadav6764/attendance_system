@@ -1,27 +1,27 @@
-# Attendance & Leave Management System
+﻿# Attendance & Leave Management System
 
 A modern, production-ready attendance and leave management system built with the MERN stack (MongoDB, Express, React, Node.js). Features a clean, Google Gemini-inspired UI with role-based access control for Students and Admins.
 
-## 🌟 Features
+##  Features
 
 ### Student Features
 
-- ✅ **Mark Daily Attendance** - One-time attendance marking per day
-- 📊 **View Attendance History** - Track personal attendance records with statistics
-- 📝 **Apply for Leave** - Submit leave applications with detailed reasons
-- 🔍 **Track Leave Status** - Monitor pending, approved, and rejected leaves
-- 🗑️ **Delete Pending Leaves** - Cancel pending leave applications
+-  **Mark Daily Attendance** - One-time attendance marking per day
+-  **View Attendance History** - Track personal attendance records with statistics
+-  **Apply for Leave** - Submit leave applications with detailed reasons
+-  **Track Leave Status** - Monitor pending, approved, and rejected leaves
+-  **Delete Pending Leaves** - Cancel pending leave applications
 
 ### Admin Features
 
-- 📋 **View All Attendance** - Monitor attendance records for all students
-- 🔎 **Advanced Filtering** - Filter by date range, status, and student
-- 📊 **Real-time Statistics** - Dashboard with attendance analytics
-- 📬 **Manage Leave Requests** - Approve or reject student leave applications
-- 💬 **Add Admin Remarks** - Provide feedback on leave decisions
-- 🎯 **Role-based Access** - Complete control over system management
+-  **View All Attendance** - Monitor attendance records for all students
+-  **Advanced Filtering** - Filter by date range, status, and student
+-  **Real-time Statistics** - Dashboard with attendance analytics
+-  **Manage Leave Requests** - Approve or reject student leave applications
+-  **Add Admin Remarks** - Provide feedback on leave decisions
+-  **Role-based Access** - Complete control over system management
 
-## 🏗️ Architecture
+##  Architecture
 
 ### Tech Stack
 
@@ -35,32 +35,32 @@ A modern, production-ready attendance and leave management system built with the
 
 ```
 major_project/
-├── server.js                 # Express server entry point
-├── models/                   # MongoDB schemas
-│   ├── User.js              # User model with authentication
-│   ├── Attendance.js        # Attendance records
-│   └── Leave.js             # Leave applications
-├── controllers/             # Business logic
-│   ├── authController.js    # Authentication handlers
-│   ├── attendanceController.js
-│   └── leaveController.js
-├── routes/                  # API route definitions
-│   ├── authRoutes.js
-│   ├── attendanceRoutes.js
-│   └── leaveRoutes.js
-├── middleware/              # Custom middleware
-│   └── auth.js             # JWT verification & authorization
-└── client/                  # React frontend
-    ├── src/
-    │   ├── components/      # Reusable components
-    │   ├── context/        # React context (Auth)
-    │   ├── pages/          # Page components
-    │   ├── services/       # API service layer
-    │   └── App.js          # Main app component
-    └── package.json
+ server.js                 # Express server entry point
+ models/                   # MongoDB schemas
+    User.js              # User model with authentication
+    Attendance.js        # Attendance records
+    Leave.js             # Leave applications
+ controllers/             # Business logic
+    authController.js    # Authentication handlers
+    attendanceController.js
+    leaveController.js
+ routes/                  # API route definitions
+    authRoutes.js
+    attendanceRoutes.js
+    leaveRoutes.js
+ middleware/              # Custom middleware
+    auth.js             # JWT verification & authorization
+ client/                  # React frontend
+     src/
+        components/      # Reusable components
+        context/        # React context (Auth)
+        pages/          # Page components
+        services/       # API service layer
+        App.js          # Main app component
+     package.json
 ```
 
-## 🔐 Roles & Permissions
+##  Roles & Permissions
 
 ### Student Role
 
@@ -79,7 +79,7 @@ major_project/
 - Can add remarks to leave decisions
 - Full system access
 
-## 📡 API Endpoints
+##  API Endpoints
 
 ### Authentication
 
@@ -118,7 +118,7 @@ GET    /api/leave/all        - Get all leave applications
 PATCH  /api/leave/:id        - Approve/reject leave
 ```
 
-## 🔒 Authentication & Authorization Flow
+##  Authentication & Authorization Flow
 
 ### Registration Flow
 
@@ -157,7 +157,7 @@ PATCH  /api/leave/:id        - Approve/reject leave
 - CORS configuration
 - Secure HTTP headers
 
-## 🚀 Setup Instructions
+##  Setup Instructions
 
 ### Prerequisites
 
@@ -238,7 +238,7 @@ From the root directory:
 npm run dev:full
 ```
 
-## 📝 API Testing with Postman
+##  API Testing with Postman
 
 ### Import Collection
 
@@ -318,7 +318,7 @@ npm run dev:full
    }
    ```
 
-## 🎨 UI/UX Design
+##  UI/UX Design
 
 ### Design Philosophy
 
@@ -344,7 +344,7 @@ npm run dev:full
 - **Tables**: Responsive with hover effects
 - **Alerts**: Contextual notifications with icons
 
-## 🔧 Configuration
+##  Configuration
 
 ### MongoDB Indexes
 
@@ -363,9 +363,9 @@ npm run dev:full
 - Origin: CLIENT_URL from .env
 - Credentials: true
 
-## 🧪 Evaluation Criteria
+##  Evaluation Criteria
 
-### Security ✅
+### Security 
 
 - Bcrypt password hashing with 10 salt rounds
 - JWT-based authentication
@@ -374,7 +374,7 @@ npm run dev:full
 - Input validation and sanitization
 - Protected routes and endpoints
 
-### API Correctness ✅
+### API Correctness 
 
 - RESTful design principles
 - Proper HTTP methods and status codes
@@ -382,7 +382,7 @@ npm run dev:full
 - Consistent response formats
 - Request validation
 
-### Code Readability ✅
+### Code Readability 
 
 - Clear variable and function names
 - Comprehensive comments
@@ -390,21 +390,21 @@ npm run dev:full
 - Separation of concerns
 - DRY principles
 
-### Role Enforcement ✅
+### Role Enforcement 
 
 - Middleware-based role checking
 - Route-level protection
 - UI-based role rendering
 - Separate admin/student routes
 
-### Ownership-Based Access ✅
+### Ownership-Based Access 
 
 - Students see only their data
 - Middleware verification
 - Database-level filtering
 - Frontend route protection
 
-## 📊 Business Logic
+##  Business Logic
 
 ### Attendance Rules
 
@@ -418,14 +418,14 @@ npm run dev:full
 ### Leave Management Rules
 
 1. Leave start date cannot be in the past
-2. End date must be ≥ start date
-3. Reason must be ≥ 10 characters
-4. Status workflow: pending → approved/rejected
+2. End date must be  start date
+3. Reason must be  10 characters
+4. Status workflow: pending  approved/rejected
 5. Only pending leaves can be deleted
 6. Only admins can change status
 7. Admin remarks optional but recommended
 
-## 🛠️ Development
+##  Development
 
 ### Available Scripts
 
@@ -450,7 +450,7 @@ Both:
 npm run dev:full # Run both servers concurrently
 ```
 
-## 📦 Dependencies
+##  Dependencies
 
 ### Backend
 
@@ -469,7 +469,7 @@ npm run dev:full # Run both servers concurrently
 - axios: HTTP client
 - jwt-decode: JWT decoding
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### MongoDB Connection Error
 
@@ -503,14 +503,14 @@ Error: listen EADDRINUSE: address already in use :::5000
 
 **Solution**: Kill process on port 5000 or change PORT in .env
 
-## 📄 License
+##  License
 
 ISC
 
-## 👥 Support
+##  Support
 
 For issues and questions, please check the troubleshooting section or create an issue in the repository.
 
 ---
 
-**Built with ❤️ using MERN Stack**
+**Built with  using MERN Stack**

@@ -1,6 +1,6 @@
-# Attendance & Leave Management System - Deployment Guide
+﻿# Attendance & Leave Management System - Deployment Guide
 
-## 🚀 Deploying to Vercel
+##  Deploying to Vercel
 
 This MERN stack application can be deployed on Vercel with the following setup:
 
@@ -23,7 +23,7 @@ This MERN stack application can be deployed on Vercel with the following setup:
    - Vercel will auto-detect it as a Node.js project
 
 3. **Configure Environment Variables:**
-   Add these in Vercel Dashboard → Settings → Environment Variables:
+   Add these in Vercel Dashboard  Settings  Environment Variables:
 
    ```
    MONGO_URI=mongodb+srv://majorproject:ZOiqeHUs3xvt3Fu4@cluster0.mfempxz.mongodb.net/majorproject?retryWrites=true&w=majority&appName=Cluster0
@@ -55,13 +55,13 @@ vercel --prod
 
 ### Important Notes
 
-⚠️ **Backend Deployment:**
+ **Backend Deployment:**
 This setup uses Vercel's serverless functions. The `vercel.json` file configures the backend to run as serverless API routes.
 
-⚠️ **Frontend:**
+ **Frontend:**
 The React app will be built and served as static files.
 
-⚠️ **CORS Configuration:**
+ **CORS Configuration:**
 After deployment, update the `CLIENT_URL` environment variable with your actual Vercel URL.
 
 ### Alternative: Separate Deployments
@@ -112,6 +112,6 @@ For issues, check:
 - MongoDB Atlas logs
 - Browser console for frontend errors
 
-## 📱 Live URL
+##  Live URL
 
 After deployment: `https://your-app-name.vercel.app`

@@ -1,120 +1,120 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-// Generate JWT token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '7d'
+// Create a login token for the user (like a temporary ID card that expires)
+const generateToken = (userId) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || '7d' // Token valid for 7 days
   });
 };
 
-// Register a new user
+// Handle new user registration (signup)
 exports.register = async (req, res) => {
   try {
     const { name, email, password, role, rollNumber, department } = req.body;
 
-    // Validation
+    // Make sure user filled in all required fields
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide name, email, and password.'
+        message: 'Please provide your name, email, and password'
       });
     }
 
-    // Check if user already exists
+    // Check if someone already registered with this email
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'User with this email already exists.'
+        message: 'This email is already registered. Please use a different email'
       });
     }
 
-    // Create user
-    const user = await User.create({
+    // Create new user account in database
+    const newUser = await User.create({
       name,
       email,
       password,
-      role: role || 'student',
+      role: role || 'student', // Default to student if role not specified
       rollNumber,
       department
     });
 
-    // Generate token
-    const token = generateToken(user._id);
+    // Give them a login token so they're automatically logged in
+    const loginToken = generateToken(newUser._id);
 
     res.status(201).json({
       success: true,
-      message: 'User registered successfully.',
+      message: 'Account created successfully! Welcome!',
       data: {
         user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          rollNumber: user.rollNumber,
-          department: user.department
+          id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          role: newUser.role,
+          rollNumber: newUser.rollNumber,
+          department: newUser.department
         },
-        token
+        token: loginToken
       }
     });
   } catch (error) {
-    console.error('Register error:', error);
+    console.error('Registration failed:', error);
     
-    // Handle duplicate key error
+    // Check if error is because email/roll number already exists
     if (error.code === 11000) {
-      const field = Object.keys(error.keyPattern)[0];
+      const duplicateField = Object.keys(error.keyPattern)[0];
       return res.status(400).json({
         success: false,
-        message: `${field} already exists.`
+        message: `This ${duplicateField} is already taken. Please use a different one`
       });
     }
 
     res.status(500).json({
       success: false,
-      message: 'Error registering user.',
+      message: 'Failed to create account. Please try again',
       error: error.message
     });
   }
 };
 
-// User login
+// Handle user login
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validation
+    // Make sure they entered both email and password
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide email and password.'
+        message: 'Please enter both email and password'
       });
     }
 
-    // Check if user exists (include password for comparison)
+    // Find user with this email (also get password to check it)
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials.'
+        message: 'Email or password is incorrect'
       });
     }
 
-    // Verify password
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
+    // Check if the password matches
+    const isPasswordCorrect = await user.comparePassword(password);
+    if (!isPasswordCorrect) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials.'
+        message: 'Email or password is incorrect'
       });
     }
 
-    // Generate token
-    const token = generateToken(user._id);
+    // Give them a login token
+    const loginToken = generateToken(user._id);
 
     res.json({
       success: true,
-      message: 'Login successful.',
+      message: 'Login successful! Welcome back!',
       data: {
         user: {
           id: user._id,
@@ -124,33 +124,33 @@ exports.login = async (req, res) => {
           rollNumber: user.rollNumber,
           department: user.department
         },
-        token
+        token: loginToken
       }
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login failed:', error);
     res.status(500).json({
       success: false,
-      message: 'Error logging in.',
+      message: 'Login failed. Please try again',
       error: error.message
     });
   }
 };
 
-// Get current user profile
+// Get logged-in user's profile information
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const currentUser = await User.findById(req.user._id);
     
     res.json({
       success: true,
-      data: { user }
+      data: { user: currentUser }
     });
   } catch (error) {
-    console.error('Get profile error:', error);
+    console.error('Failed to get user profile:', error);
     res.status(500).json({
       success: false,
-      message: 'Error fetching profile.',
+      message: 'Could not load your profile. Please try again',
       error: error.message
     });
   }

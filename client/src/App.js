@@ -19,7 +19,7 @@ function AppRoutes() {
     <>
       <Navbar />
       <Routes>
-        {/* Public Routes */}
+        {/* Pages anyone can visit (without login) */}
         <Route 
           path="/login" 
           element={user ? <Navigate to="/" replace /> : <Login />} 
@@ -29,7 +29,7 @@ function AppRoutes() {
           element={user ? <Navigate to="/" replace /> : <Register />} 
         />
 
-        {/* Protected Routes */}
+        {/* Protected pages - need to be logged in */}
         <Route
           path="/"
           element={
@@ -39,7 +39,7 @@ function AppRoutes() {
           }
         />
 
-        {/* Student Routes */}
+        {/* Student-only pages */}
         <Route
           path="/attendance"
           element={
@@ -57,7 +57,7 @@ function AppRoutes() {
           }
         />
 
-        {/* Admin Routes */}
+        {/* Admin-only pages */}
         <Route
           path="/admin/attendance"
           element={
@@ -75,13 +75,14 @@ function AppRoutes() {
           }
         />
 
-        {/* Fallback */}
+        {/* If URL doesn't match any route, go to home page */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );
 }
 
+// Main App component - wraps everything with Router and Auth
 function App() {
   return (
     <Router>

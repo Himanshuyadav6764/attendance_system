@@ -1,4 +1,4 @@
-# 🚀 Quick Start Guide
+﻿#  Quick Start Guide
 
 ## Get Started in 5 Minutes
 
@@ -35,7 +35,7 @@ mongod
 npm run dev
 ```
 
-✅ Backend running on http://localhost:5000
+ Backend running on http://localhost:5000
 
 ### Step 5: Install Frontend Dependencies
 
@@ -51,9 +51,9 @@ npm install
 npm start
 ```
 
-✅ Frontend running on http://localhost:3000
+ Frontend running on http://localhost:3000
 
-## 🎯 Test the Application
+##  Test the Application
 
 ### Create Admin Account
 
@@ -91,14 +91,14 @@ npm start
 3. Review leave applications
 4. Approve/reject leaves
 
-## 📊 Test with Postman
+##  Test with Postman
 
 1. Import `Postman_Collection.json` into Postman
 2. Set base_url variable: `http://localhost:5000/api`
 3. Run the requests in order:
-   - Register → Login → Mark Attendance → Apply Leave
+   - Register  Login  Mark Attendance  Apply Leave
 
-## ⚡ Quick Commands
+##  Quick Commands
 
 ### Run Both Servers Together
 
@@ -116,7 +116,7 @@ use attendance-leave-db
 db.dropDatabase()
 ```
 
-## 🐛 Common Issues
+##  Common Issues
 
 ### Port 5000 Already in Use
 
@@ -137,7 +137,7 @@ PORT=5001
 - Check proxy setting in client/package.json
 - Clear browser cache and restart
 
-## 📱 Default Login Credentials
+##  Default Login Credentials
 
 After registration, use these for testing:
 
@@ -151,9 +151,9 @@ After registration, use these for testing:
 - Email: john@example.com
 - Password: student123
 
-## 🎨 UI Features to Try
+##  UI Features to Try
 
-✨ **Modern Design Elements:**
+ **Modern Design Elements:**
 
 - Smooth animations on hover
 - Card-based layouts
@@ -162,7 +162,7 @@ After registration, use these for testing:
 - Interactive dashboards
 - Real-time statistics
 
-## 📖 Next Steps
+##  Next Steps
 
 1. Explore the [README.md](README.md) for detailed documentation
 2. Check API endpoints in Postman collection
@@ -171,4 +171,4 @@ After registration, use these for testing:
 
 ---
 
-**Enjoy building with this system! 🎉**
+**Enjoy building with this system! **
