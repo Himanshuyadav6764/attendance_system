@@ -1,4 +1,4 @@
-﻿# Attendance & Leave Management System
+﻿# Attendance & Leave Management 
 
 A modern, production-ready attendance and leave management system built with the MERN stack (MongoDB, Express, React, Node.js). Features a clean, Google Gemini-inspired UI with role-based access control for Students and Admins.
 
