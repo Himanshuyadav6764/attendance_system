@@ -30,15 +30,22 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Create new user account in database
-    const newUser = await User.create({
+    // Prepare user data - only include rollNumber and department for students
+    const userData = {
       name,
       email,
       password,
-      role: role || 'student', // Default to student if role not specified
-      rollNumber,
-      department
-    });
+      role: role || 'student' // Default to student if role not specified
+    };
+    
+    // Add student-specific fields only if role is student
+    if (userData.role === 'student') {
+      userData.rollNumber = rollNumber;
+      userData.department = department;
+    }
+    
+    // Create new user account in database
+    const newUser = await User.create(userData);
 
     // Give them a login token so they're automatically logged in
     const loginToken = generateToken(newUser._id);

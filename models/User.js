@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
   rollNumber: {
     type: String,
     sparse: true,
-    unique: true
+    trim: true
   },
   department: {
     type: String,
@@ -39,6 +39,24 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+});
+
+// Validate rollNumber uniqueness only for students
+userSchema.pre('save', async function(next) {
+  // Check for duplicate roll number only if it's a student and rollNumber is provided
+  if (this.role === 'student' && this.rollNumber) {
+    const existingStudent = await mongoose.model('User').findOne({
+      rollNumber: this.rollNumber,
+      _id: { $ne: this._id }
+    });
+    if (existingStudent) {
+      const error = new Error('This rollNumber is already taken. Please use a different one');
+      error.code = 11000;
+      error.keyPattern = { rollNumber: 1 };
+      return next(error);
+    }
+  }
+  next();
 });
 
 // Hash password before saving
