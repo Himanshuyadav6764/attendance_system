@@ -9,7 +9,8 @@
     "client": "npm start --prefix client",
     "dev:full": "concurrently \"npm run dev\" \"npm run client\"",
     "build": "npm run build --prefix client",
-    "seed:hod": "node seedHOD.js"
+    "seed:hod": "node seedHOD.js",
+    "seed:multiple-hods": "node seedMultipleHODs.js"
   },
   "keywords": ["attendance", "leave", "management", "MERN"],
   "author": "",
