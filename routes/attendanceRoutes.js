@@ -24,10 +24,10 @@ router.get('/', authenticate, authorize('student'), getMyAttendance);
 
 /**
  * @route   GET /api/attendance/all
- * @desc    Get all attendance records
- * @access  Private (Admin)
+ * @desc    Get all attendance records (filtered by department for HOD)
+ * @access  Private (Admin/HOD)
  */
-router.get('/all', authenticate, authorize('admin'), getAllAttendance);
+router.get('/all', authenticate, authorize('admin', 'hod'), getAllAttendance);
 
 /**
  * @route   GET /api/attendance/stats

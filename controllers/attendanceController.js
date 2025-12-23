@@ -119,6 +119,19 @@ exports.getAllAttendance = async (req, res) => {
     // Build search query based on what HOD wants to filter
     let searchQuery = {};
 
+    // If user is HOD, filter by their department only
+    if (req.user.role === 'hod') {
+      // Find all users in the same department
+      const User = require('../models/User');
+      const departmentStudents = await User.find({
+        department: req.user.department,
+        role: 'student'
+      }).select('_id');
+      
+      const studentIds = departmentStudents.map(s => s._id);
+      searchQuery.user = { $in: studentIds };
+    }
+
     // Filter by specific student if needed
     if (userId) {
       searchQuery.user = userId;

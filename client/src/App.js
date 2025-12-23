@@ -11,6 +11,7 @@ import StudentLeaves from './pages/StudentLeaves';
 import AdminAttendance from './pages/AdminAttendance';
 import AdminLeaves from './pages/AdminLeaves';
 import HodProfile from './pages/HodProfile';
+import AttendanceCalendar from './pages/AttendanceCalendar';
 import './App.css';
 
 function AppRoutes() {
@@ -72,6 +73,14 @@ function AppRoutes() {
           element={
             <PrivateRoute requiredRole="hod">
               <AdminLeaves />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/hod/calendar"
+          element={
+            <PrivateRoute requiredRole="hod">
+              <AttendanceCalendar />
             </PrivateRoute>
           }
         />

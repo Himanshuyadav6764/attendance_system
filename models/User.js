@@ -26,6 +26,14 @@ const userSchema = new mongoose.Schema({
     enum: ['student', 'hod'],
     default: 'student'
   },
+  hodId: {
+    type: String,
+    sparse: true,
+    trim: true,
+    required: function() {
+      return this.role === 'hod';
+    }
+  },
   rollNumber: {
     type: String,
     sparse: true,
@@ -53,6 +61,40 @@ userSchema.pre('save', async function(next) {
       const error = new Error('This rollNumber is already taken. Please use a different one');
       error.code = 11000;
       error.keyPattern = { rollNumber: 1 };
+      return next(error);
+    }
+  }
+  next();
+});
+
+// Generate HOD ID automatically for HOD users
+userSchema.pre('save', async function(next) {
+  // Only generate HOD ID if it's a HOD and ID not already set
+  if (this.role === 'hod' && !this.hodId && this.isNew) {
+    try {
+      // Create department abbreviation (first 3 letters, uppercase)
+      const deptAbbr = this.department 
+        ? this.department.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, '')
+        : 'GEN';
+      
+      // Find the last HOD in this department
+      const lastHOD = await mongoose.model('User').findOne({
+        role: 'hod',
+        department: this.department
+      }).sort({ createdAt: -1 });
+
+      let sequence = 1;
+      if (lastHOD && lastHOD.hodId) {
+        // Extract sequence number from last HOD ID
+        const match = lastHOD.hodId.match(/(\d+)$/);
+        if (match) {
+          sequence = parseInt(match[1]) + 1;
+        }
+      }
+
+      // Generate HOD ID: HOD_DEPT_001
+      this.hodId = `HOD_${deptAbbr}_${sequence.toString().padStart(3, '0')}`;
+    } catch (error) {
       return next(error);
     }
   }

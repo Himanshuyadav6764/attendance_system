@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const HodId = require('../models/HodId');
 const jwt = require('jsonwebtoken');
 
 // Create a login token for the user (like a temporary ID card that expires)
@@ -6,6 +7,61 @@ const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || '7d' // Token valid for 7 days
   });
+};
+
+// Validate HOD ID - Check if it exists in ids collection
+exports.validateHodId = async (req, res) => {
+  try {
+    const { hodId } = req.body;
+
+    if (!hodId) {
+      return res.status(400).json({
+        success: false,
+        message: 'HOD ID is required'
+      });
+    }
+
+    // Check if HOD ID exists in ids collection
+    const existingHodId = await HodId.findOne({ hodId: hodId.trim() });
+
+    if (existingHodId) {
+      // Check if already registered
+      if (existingHodId.isRegistered) {
+        return res.status(400).json({
+          success: false,
+          message: 'This HOD ID is already registered. Please login instead.',
+          data: {
+            valid: false,
+            alreadyRegistered: true
+          }
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: 'Valid HOD ID',
+        data: {
+          valid: true,
+          department: existingHodId.department,
+          alreadyRegistered: false
+        }
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: 'Invalid HOD ID. Please contact admin for correct HOD ID.',
+        data: {
+          valid: false
+        }
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
 };
 
 // Handle new user registration (signup)
@@ -44,7 +100,94 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Check if someone already registered with this email
+    // For HOD registration, validate HOD ID and Department match
+    if (role === 'hod') {
+      const { hodId } = req.body;
+      
+      if (!hodId) {
+        return res.status(400).json({
+          success: false,
+          message: 'HOD ID is required for HOD registration'
+        });
+      }
+
+      // Check if HOD ID exists in ids collection
+      const hodIdRecord = await HodId.findOne({ hodId: hodId.trim() });
+      
+      if (!hodIdRecord) {
+        return res.status(400).json({
+          success: false,
+          message: 'HOD ID not found in database. Please contact admin for correct HOD ID.'
+        });
+      }
+
+      // Check if HOD ID and Department match
+      if (hodIdRecord.department !== department) {
+        return res.status(400).json({
+          success: false,
+          message: 'HOD ID and Department do not match. Please check your details.'
+        });
+      }
+
+      // Check if email already exists
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+        return res.status(400).json({
+          success: false,
+          message: 'This email is already registered. Please use a different email.'
+        });
+      }
+
+      // Save password to HodId collection
+      hodIdRecord.password = password;
+      hodIdRecord.isRegistered = true;
+      await hodIdRecord.save();
+
+      // Use predefined name from HodId collection
+      const hodName = hodIdRecord.name || name || 'HOD';
+
+      // Create new HOD user
+      const newHOD = await User.create({
+        name: hodName,
+        email,
+        password,
+        role: 'hod',
+        hodId: hodId.trim(),
+        department
+      });
+
+      // Update registeredUserId in HodId collection
+      hodIdRecord.registeredUserId = newHOD._id;
+      await hodIdRecord.save();
+
+      console.log('HOD Registration successful:', { 
+        hodId: newHOD.hodId, 
+        email: newHOD.email,
+        role: newHOD.role,
+        passwordSavedInIds: true
+      });
+
+      // Give them a login token
+      const loginToken = generateToken(newHOD._id);
+
+      return res.status(201).json({
+        success: true,
+        message: 'HOD account registered successfully! You can now login with your HOD ID.',
+        data: {
+          user: {
+            id: newHOD._id,
+            name: newHOD.name,
+            email: newHOD.email,
+            role: newHOD.role,
+            hodId: newHOD.hodId,
+            department: newHOD.department
+          },
+          token: loginToken
+        }
+      });
+    }
+
+    // Student registration - check if email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -53,23 +196,17 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Prepare user data
+    // Prepare user data for student
     const userData = {
       name,
       email,
       password,
-      role: role || 'student' // Default to student if role not specified
+      role: role || 'student',
+      rollNumber,
+      department
     };
     
-    // Add role-specific fields
-    if (userData.role === 'student') {
-      userData.rollNumber = rollNumber;
-      userData.department = department;
-    } else if (userData.role === 'hod') {
-      userData.department = department;
-    }
-    
-    // Create new user account in database
+    // Create new student account in database
     const newUser = await User.create(userData);
 
     // Give them a login token so they're automatically logged in
@@ -77,13 +214,14 @@ exports.register = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: `${userData.role === 'hod' ? 'HOD' : 'Student'} account created successfully! Welcome!`,
+      message: 'Student account created successfully!',
       data: {
         user: {
           id: newUser._id,
           name: newUser.name,
           email: newUser.email,
           role: newUser.role,
+          hodId: newUser.hodId,
           rollNumber: newUser.rollNumber,
           department: newUser.department
         },
@@ -113,32 +251,70 @@ exports.register = async (req, res) => {
 // Handle user login
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
-    // Make sure they entered both email and password
+    // Make sure they entered both email/HOD ID and password
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please enter both email and password'
+        message: 'Please enter both email/HOD ID and password'
       });
     }
 
-    // Find user with this email (also get password to check it)
-    const user = await User.findOne({ email }).select('+password');
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Email or password is incorrect'
-      });
-    }
+    // For HOD: login with HOD ID only
+    // For Student: login with email
+    let user;
+    if (role === 'hod') {
+      // HOD login - check password from HodId collection
+      const hodIdToSearch = email.trim();
+      const hodIdRecord = await HodId.findOne({ hodId: hodIdToSearch }).select('+password');
+      
+      console.log('HOD Login attempt:', { hodIdToSearch, hodIdRecordFound: !!hodIdRecord });
+      
+      if (!hodIdRecord || !hodIdRecord.password) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid HOD ID or password'
+        });
+      }
 
-    // Check if the password matches
-    const isPasswordCorrect = await user.comparePassword(password);
-    if (!isPasswordCorrect) {
-      return res.status(401).json({
-        success: false,
-        message: 'Email or password is incorrect'
-      });
+      // Check if the password matches from HodId collection
+      const isPasswordCorrect = await hodIdRecord.comparePassword(password);
+      if (!isPasswordCorrect) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid HOD ID or password'
+        });
+      }
+
+      // Get user details from User collection
+      user = await User.findOne({ hodId: hodIdToSearch, role: 'hod' });
+      
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid HOD ID or password'
+        });
+      }
+    } else {
+      // Student login - search by email
+      user = await User.findOne({ email: email, role: 'student' }).select('+password');
+      
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid email or password'
+        });
+      }
+
+      // Check if the password matches
+      const isPasswordCorrect = await user.comparePassword(password);
+      if (!isPasswordCorrect) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid email or password'
+        });
+      }
     }
 
     // Give them a login token
@@ -153,6 +329,7 @@ exports.login = async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          hodId: user.hodId,
           rollNumber: user.rollNumber,
           department: user.department
         },

@@ -23,7 +23,7 @@ const Dashboard = () => {
       setLoading(true);
       
       if (isAdmin) {
-        // Fetch admin stats
+        // Fetch admin/HOD stats
         const [attendanceRes, leavesRes] = await Promise.all([
           attendanceService.getAllAttendance(),
           leaveService.getAllLeaves()
@@ -35,8 +35,11 @@ const Dashboard = () => {
           a.date.split('T')[0] === today && a.status === 'present'
         ).length;
         
+        // Get unique students from attendance records
+        const uniqueStudents = new Set(attendanceRes.data.attendance.map(a => a.user?._id || a.user));
+        
         setStats({
-          totalStudents: 120,
+          totalStudents: uniqueStudents.size,
           todayPresent: todayAttendance,
           pendingLeaves: pendingLeaves,
         });

@@ -28,7 +28,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(formData);
+      await login({ ...formData, role: activeTab });
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
@@ -49,13 +49,13 @@ const Login = () => {
               className={`auth-tab ${activeTab === 'hod' ? 'active' : ''}`}
               onClick={() => setActiveTab('hod')}
             >
-              HOD Login
+              HOD
             </button>
             <button 
               className={`auth-tab ${activeTab === 'student' ? 'active' : ''}`}
               onClick={() => setActiveTab('student')}
             >
-              Student Login
+              Student
             </button>
           </div>
         </div>
@@ -68,15 +68,17 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="input-group">
-            <label htmlFor="email" className="input-label">Email</label>
+            <label htmlFor="email" className="input-label">
+              {activeTab === 'hod' ? 'HOD ID' : 'Email'}
+            </label>
             <input
-              type="email"
+              type="text"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               className="input-field"
-              placeholder="Enter your email"
+              placeholder={activeTab === 'hod' ? 'Enter your HOD ID (e.g., HOD_IT_001)' : 'Enter your email'}
               required
             />
           </div>

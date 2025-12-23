@@ -33,9 +33,9 @@ router.get('/all', authenticate, authorize('hod'), getAllLeaves);
 /**
  * @route   PATCH /api/leave/:id
  * @desc    Update leave status (approve/reject)
- * @access  Private (Admin)
+ * @access  Private (HOD)
  */
-router.patch('/:id', authenticate, authorize('admin'), updateLeaveStatus);
+router.patch('/:id', authenticate, authorize('hod'), updateLeaveStatus);
 
 /**
  * @route   DELETE /api/leave/:id

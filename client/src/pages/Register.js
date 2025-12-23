@@ -14,9 +14,12 @@ const Register = () => {
     confirmPassword: '',
     role: 'student',
     rollNumber: '',
-    department: ''
+    department: '',
+    hodId: ''
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [hodId, setHodId] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleTabChange = (role) => {
@@ -28,9 +31,12 @@ const Register = () => {
       confirmPassword: '',
       role: role,
       rollNumber: '',
-      department: ''
+      department: '',
+      hodId: ''
     });
     setError('');
+    setSuccess('');
+    setHodId('');
   };
 
   const handleChange = (e) => {
@@ -39,11 +45,13 @@ const Register = () => {
       [e.target.name]: e.target.value
     });
     setError('');
+    setSuccess('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     if (formData.password.length < 6) {
@@ -60,8 +68,14 @@ const Register = () => {
 
     try {
       const { confirmPassword, ...registrationData } = formData;
-      await register(registrationData);
-      navigate('/');
+      const response = await register(registrationData);
+      
+      setSuccess('Account created successfully!');
+      
+      // Navigate after showing success message for 2 seconds
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
@@ -82,14 +96,14 @@ const Register = () => {
               onClick={() => handleTabChange('student')}
               type="button"
             >
-              Student Registration
+              Student
             </button>
             <button 
               className={`auth-tab ${activeTab === 'hod' ? 'active' : ''}`}
               onClick={() => handleTabChange('hod')}
               type="button"
             >
-              HOD Registration
+              HOD
             </button>
           </div>
         </div>
@@ -100,20 +114,41 @@ const Register = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="input-group">
-            <label htmlFor="name" className="input-label">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="input-field"
-              placeholder="Enter your full name"
-              required
-            />
+        {success && hodId && (
+          <div className="alert alert-success">
+            <div style={{ marginBottom: '10px' }}>{success}</div>
+            <div style={{ 
+              padding: '10px', 
+              background: 'rgba(255,255,255,0.9)', 
+              borderRadius: '6px',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              color: '#1967d2'
+            }}>
+              {hodId}
+            </div>
+            <div style={{ marginTop: '8px', fontSize: '14px' }}>
+              Please save this HOD ID for login
+            </div>
           </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          {activeTab === 'student' && (
+            <div className="input-group">
+              <label htmlFor="name" className="input-label">Full Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="input-field"
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
+          )}
 
           <div className="input-group">
             <label htmlFor="email" className="input-label">Email Address</label>
@@ -128,6 +163,54 @@ const Register = () => {
               required
             />
           </div>
+
+          {activeTab === 'hod' && (
+            <>
+              <div className="input-group">
+                <label htmlFor="hodId" className="input-label">HOD ID</label>
+                <input
+                  type="text"
+                  id="hodId"
+                  name="hodId"
+                  value={formData.hodId}
+                  onChange={handleChange}
+                  className="input-field"
+                  placeholder="Enter your assigned HOD ID"
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="department" className="input-label">Department</label>
+                <select
+                  id="department"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  className="input-field"
+                  required
+                  style={{ cursor: 'pointer' }}
+                >
+                  <option value="">Select Department</option>
+                  <option value="Computer Science Engineering">Computer Science Engineering (CSE)</option>
+                  <option value="Information Technology">Information Technology (IT)</option>
+                  <option value="Electronics and Communication Engineering">Electronics and Communication Engineering (ECE)</option>
+                  <option value="Electrical Engineering">Electrical Engineering (EE)</option>
+                  <option value="Electronics and Electrical Engineering">Electronics and Electrical Engineering (EEE)</option>
+                  <option value="Mechanical Engineering">Mechanical Engineering (ME)</option>
+                  <option value="Civil Engineering">Civil Engineering (CE)</option>
+                  <option value="Chemical Engineering">Chemical Engineering (CHE)</option>
+                  <option value="Biotechnology">Biotechnology (BT)</option>
+                  <option value="Aerospace Engineering">Aerospace Engineering (AE)</option>
+                  <option value="Automobile Engineering">Automobile Engineering (AU)</option>
+                  <option value="Industrial Engineering">Industrial Engineering (IE)</option>
+                  <option value="Production Engineering">Production Engineering (PE)</option>
+                  <option value="Instrumentation Engineering">Instrumentation Engineering (IE)</option>
+                  <option value="Petroleum Engineering">Petroleum Engineering (PT)</option>
+                </select>
+              </div>
+            </>
+          )}
 
           {activeTab === 'student' && (
             <>
@@ -147,34 +230,27 @@ const Register = () => {
 
               <div className="input-group">
                 <label htmlFor="department" className="input-label">Department</label>
-                <input
-                  type="text"
+                <select
                   id="department"
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="e.g. Computer Science"
                   required
-                />
+                  style={{ cursor: 'pointer' }}
+                >
+                  <option value="">Select Department</option>
+                  <option value="Computer Science Engineering">Computer Science Engineering (CSE)</option>
+                  <option value="Information Technology">Information Technology (IT)</option>
+                  <option value="Electronics and Communication Engineering">Electronics and Communication Engineering (ECE)</option>
+                  <option value="Electrical Engineering">Electrical Engineering (EE)</option>
+                  <option value="Electronics and Electrical Engineering">Electronics and Electrical Engineering (EEE)</option>
+                  <option value="Mechanical Engineering">Mechanical Engineering (ME)</option>
+                  <option value="Civil Engineering">Civil Engineering (CE)</option>
+                  <option value="Chemical Engineering">Chemical Engineering (CHE)</option>
+                </select>
               </div>
             </>
-          )}
-
-          {activeTab === 'hod' && (
-            <div className="input-group">
-              <label htmlFor="department" className="input-label">Department</label>
-              <input
-                type="text"
-                id="department"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="e.g. Computer Science, Mechanical Engineering"
-                required
-              />
-            </div>
           )}
 
           <div className="input-group">
