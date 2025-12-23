@@ -49,14 +49,12 @@ const Login = () => {
               className={`auth-tab ${activeTab === 'hod' ? 'active' : ''}`}
               onClick={() => setActiveTab('hod')}
             >
-              <span className="auth-tab-icon">👤</span>
               HOD Login
             </button>
             <button 
               className={`auth-tab ${activeTab === 'student' ? 'active' : ''}`}
               onClick={() => setActiveTab('student')}
             >
-              <span className="auth-tab-icon">🎓</span>
               Student Login
             </button>
           </div>

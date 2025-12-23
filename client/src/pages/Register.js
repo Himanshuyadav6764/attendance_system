@@ -50,7 +50,6 @@ const Register = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-icon">🎓</div>
           <h1>Create Account</h1>
           <p>Join our attendance management system</p>
         </div>
