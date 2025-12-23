@@ -24,8 +24,7 @@ const Register = () => {
 
   const handleTabChange = (role) => {
     setActiveTab(role);
-    setFormData({
-      name: '',
+    const baseFormData = {
       email: '',
       password: '',
       confirmPassword: '',
@@ -33,7 +32,14 @@ const Register = () => {
       rollNumber: '',
       department: '',
       hodId: ''
-    });
+    };
+    
+    // Only include name field for student role
+    if (role === 'student') {
+      baseFormData.name = '';
+    }
+    
+    setFormData(baseFormData);
     setError('');
     setSuccess('');
     setHodId('');
@@ -68,6 +74,17 @@ const Register = () => {
 
     try {
       const { confirmPassword, ...registrationData } = formData;
+      
+      // Remove name field for HOD registration
+      if (activeTab === 'hod') {
+        delete registrationData.name;
+      } else if (activeTab === 'student' && !registrationData.name) {
+        // Validate name for students
+        setError('Please provide your name');
+        setLoading(false);
+        return;
+      }
+      
       const response = await register(registrationData);
       
       setSuccess('Account created successfully!');
