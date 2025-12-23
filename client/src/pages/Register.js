@@ -113,9 +113,10 @@ const Register = () => {
               onChange={handleChange}
               className="input-field"
               required
+              disabled
             >
               <option value="student">Student</option>
-              <option value="admin">Admin</option>
+              <option value="hod">HOD</option>
             </select>
           </div>
 

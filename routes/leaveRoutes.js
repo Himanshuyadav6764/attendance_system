@@ -25,10 +25,10 @@ router.get('/', authenticate, authorize('student'), getMyLeaves);
 
 /**
  * @route   GET /api/leave/all
- * @desc    Get all leave applications
- * @access  Private (Admin)
+ * @desc    Get all leave applications (HOD)
+ * @access  Private (HOD)
  */
-router.get('/all', authenticate, authorize('admin'), getAllLeaves);
+router.get('/all', authenticate, authorize('hod'), getAllLeaves);
 
 /**
  * @route   PATCH /api/leave/:id

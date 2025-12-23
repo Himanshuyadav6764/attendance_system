@@ -31,9 +31,9 @@ router.get('/all', authenticate, authorize('admin'), getAllAttendance);
 
 /**
  * @route   GET /api/attendance/stats
- * @desc    Get attendance statistics
- * @access  Private (Admin)
+ * @desc    Get attendance statistics (HOD)
+ * @access  Private (HOD)
  */
-router.get('/stats', authenticate, authorize('admin'), getAttendanceStats);
+router.get('/stats', authenticate, authorize('hod'), getAttendanceStats);
 
 module.exports = router;

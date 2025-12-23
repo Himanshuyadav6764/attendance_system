@@ -56,7 +56,7 @@
           }
         },
         {
-          "name": "Register Admin",
+          "name": "Register HOD",
           "event": [
             {
               "listen": "test",
@@ -80,7 +80,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\",\n  \"role\": \"admin\"\n}"
+              "raw": "{\n  \"name\": \"Head of Department\",\n  \"email\": \"HOD123123@gmail.com\",\n  \"password\": \"HOD123\",\n  \"role\": \"hod\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/auth/register",

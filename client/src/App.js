@@ -57,19 +57,19 @@ function AppRoutes() {
           }
         />
 
-        {/* Admin-only pages */}
+        {/* HOD-only pages */}
         <Route
-          path="/admin/attendance"
+          path="/hod/attendance"
           element={
-            <PrivateRoute requiredRole="admin">
+            <PrivateRoute requiredRole="hod">
               <AdminAttendance />
             </PrivateRoute>
           }
         />
         <Route
-          path="/admin/leaves"
+          path="/hod/leaves"
           element={
-            <PrivateRoute requiredRole="admin">
+            <PrivateRoute requiredRole="hod">
               <AdminLeaves />
             </PrivateRoute>
           }

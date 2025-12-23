@@ -8,7 +8,8 @@
     "dev": "nodemon server.js",
     "client": "npm start --prefix client",
     "dev:full": "concurrently \"npm run dev\" \"npm run client\"",
-    "build": "npm run build --prefix client"
+    "build": "npm run build --prefix client",
+    "seed:hod": "node seedHOD.js"
   },
   "keywords": ["attendance", "leave", "management", "MERN"],
   "author": "",

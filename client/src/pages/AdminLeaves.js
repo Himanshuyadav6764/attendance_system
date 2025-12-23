@@ -97,7 +97,7 @@ const AdminLeaves = () => {
         <div className="grid grid-2 mb-3">
           <div className="stat-card">
             <div className="stat-icon" style={{ background: '#fef7e0' }}>
-              <span style={{ color: '#f9ab00' }}>⏳</span>
+              <span style={{ color: '#f9ab00' }}>P</span>
             </div>
             <div className="stat-content">
               <div className="stat-value">{stats.pending}</div>
@@ -107,7 +107,7 @@ const AdminLeaves = () => {
 
           <div className="stat-card">
             <div className="stat-icon" style={{ background: '#e6f4ea' }}>
-              <span style={{ color: '#1e8e3e' }}>✓</span>
+              <span style={{ color: '#1e8e3e' }}>A</span>
             </div>
             <div className="stat-content">
               <div className="stat-value">{stats.approved}</div>
@@ -117,7 +117,7 @@ const AdminLeaves = () => {
 
           <div className="stat-card">
             <div className="stat-icon" style={{ background: '#fce8e6' }}>
-              <span style={{ color: '#d93025' }}>✗</span>
+              <span style={{ color: '#d93025' }}>R</span>
             </div>
             <div className="stat-content">
               <div className="stat-value">{stats.rejected}</div>
@@ -209,7 +209,7 @@ const AdminLeaves = () => {
 
                     {leave.adminRemarks && (
                       <div className="admin-remarks-display">
-                        <strong>Admin Remarks:</strong> {leave.adminRemarks}
+                        <strong>HOD Remarks:</strong> {leave.adminRemarks}
                       </div>
                     )}
 
@@ -238,14 +238,14 @@ const AdminLeaves = () => {
                               onClick={() => handleUpdateStatus(leave._id, 'approved')}
                               disabled={processing === leave._id}
                             >
-                              {processing === leave._id ? 'Processing...' : '✓ Approve'}
+                              {processing === leave._id ? 'Processing...' : 'Approve'}
                             </button>
                             <button 
                               className="btn btn-error"
                               onClick={() => handleUpdateStatus(leave._id, 'rejected')}
                               disabled={processing === leave._id}
                             >
-                              {processing === leave._id ? 'Processing...' : '✗ Reject'}
+                              {processing === leave._id ? 'Processing...' : 'Reject'}
                             </button>
                             <button 
                               className="btn btn-secondary"

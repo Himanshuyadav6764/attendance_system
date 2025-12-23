@@ -109,12 +109,12 @@ exports.getMyLeaves = async (req, res) => {
   }
 };
 
-// Admin can view all students' leave applications
+// HOD can view all students' leave applications
 exports.getAllLeaves = async (req, res) => {
   try {
     const { status, userId, limit = 50, page = 1 } = req.query;
 
-    // Build search query based on admin's filter
+    // Build search query based on HOD's filter
     let searchQuery = {};
     if (status) {
       searchQuery.status = status; // Filter by status
@@ -155,14 +155,14 @@ exports.getAllLeaves = async (req, res) => {
   }
 };
 
-// Admin approves or rejects a leave application
+// HOD approves or rejects a leave application
 exports.updateLeaveStatus = async (req, res) => {
   try {
     const leaveId = req.params.id;
     const { status, adminRemarks } = req.body;
-    const adminUserId = req.user._id;
+    const hodUserId = req.user._id;
 
-    // Make sure admin provided valid status
+    // Make sure HOD provided valid status
     if (!status || !['approved', 'rejected'].includes(status)) {
       return res.status(400).json({
         success: false,
@@ -189,8 +189,8 @@ exports.updateLeaveStatus = async (req, res) => {
 
     // Update the leave status
     leaveApplication.status = status;
-    leaveApplication.adminRemarks = adminRemarks; // Optional note from admin
-    leaveApplication.approvedBy = adminUserId;
+    leaveApplication.adminRemarks = adminRemarks; // Optional note from HOD
+    leaveApplication.approvedBy = hodUserId;
     leaveApplication.approvedAt = new Date();
 
     await leaveApplication.save();

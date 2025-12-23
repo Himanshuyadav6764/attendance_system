@@ -37,7 +37,7 @@ exports.markAttendance = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Attendance marked successfully! ✅',
+      message: 'Attendance marked successfully!',
       data: { attendance: attendanceRecord }
     });
   } catch (error) {
@@ -111,12 +111,12 @@ exports.getMyAttendance = async (req, res) => {
   }
 };
 
-// Admin can view all students' attendance records
+// HOD can view all students' attendance records
 exports.getAllAttendance = async (req, res) => {
   try {
     const { startDate, endDate, userId, status, limit = 100, page = 1 } = req.query;
 
-    // Build search query based on what admin wants to filter
+    // Build search query based on what HOD wants to filter
     let searchQuery = {};
 
     // Filter by specific student if needed

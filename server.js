@@ -28,9 +28,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB database
 mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log('✅ Database connected successfully!'))
+.then(() => console.log('Database connected successfully!'))
 .catch((err) => {
-  console.error('❌ Failed to connect to database:', err.message);
+  console.error('Failed to connect to database:', err.message);
   process.exit(1); // Stop the app if database won't connect
 });
 
@@ -69,8 +69,8 @@ app.use((req, res) => {
 // Start the server and make it listen for requests
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
-  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 module.exports = app;

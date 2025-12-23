@@ -170,7 +170,7 @@ const StudentLeaves = () => {
           <div className="grid grid-2 mb-3">
             <div className="stat-card">
               <div className="stat-icon" style={{ background: '#fef7e0' }}>
-                <span style={{ color: '#f9ab00' }}>⏳</span>
+                <span style={{ color: '#f9ab00' }}>P</span>
               </div>
               <div className="stat-content">
                 <div className="stat-value">{stats.pending}</div>
@@ -180,7 +180,7 @@ const StudentLeaves = () => {
 
             <div className="stat-card">
               <div className="stat-icon" style={{ background: '#e6f4ea' }}>
-                <span style={{ color: '#1e8e3e' }}>✓</span>
+                <span style={{ color: '#1e8e3e' }}>A</span>
               </div>
               <div className="stat-content">
                 <div className="stat-value">{stats.approved}</div>
@@ -227,7 +227,7 @@ const StudentLeaves = () => {
                     
                     {leave.adminRemarks && (
                       <div className="admin-remarks">
-                        <strong>Admin Remarks:</strong> {leave.adminRemarks}
+                        <strong>HOD Remarks:</strong> {leave.adminRemarks}
                       </div>
                     )}
 

@@ -93,8 +93,8 @@ exports.verifyOwnership = (DatabaseModel) => {
         });
       }
 
-      // Admin can access everything
-      if (req.user.role === 'admin') {
+      // HOD can access everything
+      if (req.user.role === 'hod') {
         req.resource = item;
         return next();
       }

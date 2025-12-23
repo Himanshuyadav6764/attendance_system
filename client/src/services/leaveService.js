@@ -13,13 +13,13 @@ export const leaveService = {
     return response.data;
   },
 
-  // Get all leaves (Admin)
+  // Get all leaves (HOD)
   getAllLeaves: async (params) => {
     const response = await api.get('/leave/all', { params });
     return response.data;
   },
 
-  // Update leave status (Admin)
+  // Update leave status (HOD)
   updateLeaveStatus: async (id, data) => {
     const response = await api.patch(`/leave/${id}`, data);
     return response.data;

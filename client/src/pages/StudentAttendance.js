@@ -80,7 +80,7 @@ const StudentAttendance = () => {
     <div className="student-attendance-page">
       <div className="container">
         <div className="page-header">
-          <h1>📅 My Attendance</h1>
+          <h1>My Attendance</h1>
           <p>Track and manage your attendance records</p>
         </div>
 
@@ -126,7 +126,7 @@ const StudentAttendance = () => {
                 className="btn btn-primary"
                 disabled={marking}
               >
-                {marking ? 'Marking...' : '✓ Mark Attendance'}
+                {marking ? 'Marking...' : 'Mark Attendance'}
               </button>
             </div>
           </form>
@@ -137,7 +137,7 @@ const StudentAttendance = () => {
           <div className="grid grid-2 mt-3">
             <div className="stat-card">
               <div className="stat-icon" style={{ background: '#e6f4ea' }}>
-                <span style={{ color: '#1e8e3e' }}>✓</span>
+                <span style={{ color: '#1e8e3e' }}>P</span>
               </div>
               <div className="stat-content">
                 <div className="stat-value">{stats.present}</div>
@@ -147,7 +147,7 @@ const StudentAttendance = () => {
 
             <div className="stat-card">
               <div className="stat-icon" style={{ background: '#fef7e0' }}>
-                <span style={{ color: '#f9ab00' }}>⏰</span>
+                <span style={{ color: '#f9ab00' }}>L</span>
               </div>
               <div className="stat-content">
                 <div className="stat-value">{stats.late}</div>
@@ -157,7 +157,7 @@ const StudentAttendance = () => {
 
             <div className="stat-card">
               <div className="stat-icon" style={{ background: '#fce8e6' }}>
-                <span style={{ color: '#d93025' }}>✗</span>
+                <span style={{ color: '#d93025' }}>A</span>
               </div>
               <div className="stat-content">
                 <div className="stat-value">{stats.absent}</div>

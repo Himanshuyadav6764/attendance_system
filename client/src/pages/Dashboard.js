@@ -81,7 +81,7 @@ const Dashboard = () => {
     {
       title: 'Mark Attendance',
       description: 'Mark your daily attendance',
-      icon: '✓',
+      icon: 'CHECK',
       color: '#4a7cff',
       colorLight: '#6b94ff',
       action: () => navigate('/attendance')
@@ -89,7 +89,7 @@ const Dashboard = () => {
     {
       title: 'My Attendance',
       description: 'View your attendance history',
-      icon: '�',
+      icon: 'LIST',
       color: '#5cb85c',
       colorLight: '#7bc67e',
       action: () => navigate('/attendance')
@@ -97,7 +97,7 @@ const Dashboard = () => {
     {
       title: 'Apply for Leave',
       description: 'Submit a new leave request',
-      icon: '📄',
+      icon: 'FORM',
       color: '#ffa726',
       colorLight: '#ffb74d',
       action: () => navigate('/leaves')
@@ -105,7 +105,7 @@ const Dashboard = () => {
     {
       title: 'My Leaves',
       description: 'Track your leave applications',
-      icon: '📋',
+      icon: 'LEAVES',
       color: '#ef5350',
       colorLight: '#f44336',
       action: () => navigate('/leaves')
@@ -116,34 +116,34 @@ const Dashboard = () => {
     {
       title: 'All Attendance',
       description: 'View all students attendance',
-      icon: '📋',
+      icon: 'RECORDS',
       color: '#4a7cff',
       colorLight: '#6b94ff',
-      action: () => navigate('/admin/attendance')
+      action: () => navigate('/hod/attendance')
     },
     {
       title: 'Leave Requests',
       description: 'Approve or reject leave applications',
-      icon: '✉',
+      icon: 'INBOX',
       color: '#5cb85c',
       colorLight: '#7bc67e',
-      action: () => navigate('/admin/leaves')
+      action: () => navigate('/hod/leaves')
     },
     {
       title: 'Statistics',
       description: 'View attendance statistics',
-      icon: '📈',
+      icon: 'CHART',
       color: '#ffa726',
       colorLight: '#ffb74d',
-      action: () => navigate('/admin/attendance')
+      action: () => navigate('/hod/attendance')
     },
     {
       title: 'Reports',
       description: 'Generate attendance reports',
-      icon: '📄',
+      icon: 'REPORT',
       color: '#ef5350',
       colorLight: '#f44336',
-      action: () => navigate('/admin/attendance')
+      action: () => navigate('/hod/attendance')
     }
   ];
 

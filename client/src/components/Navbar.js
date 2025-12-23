@@ -27,8 +27,8 @@ const Navbar = () => {
             <Link to="/" className="nav-link">Dashboard</Link>
             {isAdmin ? (
               <>
-                <Link to="/admin/attendance" className="nav-link">All Attendance</Link>
-                <Link to="/admin/leaves" className="nav-link">Leave Requests</Link>
+                <Link to="/hod/attendance" className="nav-link">All Attendance</Link>
+                <Link to="/hod/leaves" className="nav-link">Leave Requests</Link>
               </>
             ) : (
               <>

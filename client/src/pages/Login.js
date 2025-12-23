@@ -6,7 +6,7 @@ import './Auth.css';
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [activeTab, setActiveTab] = useState('admin');
+  const [activeTab, setActiveTab] = useState('hod');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -46,11 +46,11 @@ const Login = () => {
           
           <div className="auth-tabs">
             <button 
-              className={`auth-tab ${activeTab === 'admin' ? 'active' : ''}`}
-              onClick={() => setActiveTab('admin')}
+              className={`auth-tab ${activeTab === 'hod' ? 'active' : ''}`}
+              onClick={() => setActiveTab('hod')}
             >
               <span className="auth-tab-icon">👤</span>
-              Admin Login
+              HOD Login
             </button>
             <button 
               className={`auth-tab ${activeTab === 'student' ? 'active' : ''}`}
