@@ -69,11 +69,19 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, role, rollNumber, department } = req.body;
 
-    // Make sure user filled in all required fields
-    if (!name || !email || !password) {
+    // Make sure user filled in all required fields - email and password for both roles
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide your name, email, and password'
+        message: 'Please provide your email and password'
+      });
+    }
+
+    // For students, name is required
+    if (role === 'student' && !name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide your name'
       });
     }
 
