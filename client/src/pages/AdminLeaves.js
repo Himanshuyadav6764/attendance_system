@@ -4,6 +4,7 @@ import './AdminLeaves.css';
 
 const AdminLeaves = () => {
   const [leaves, setLeaves] = useState([]);
+  const [allLeaves, setAllLeaves] = useState([]); // Store all leaves for stats calculation
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -11,12 +12,25 @@ const AdminLeaves = () => {
   const [selectedLeave, setSelectedLeave] = useState(null);
   const [adminRemarks, setAdminRemarks] = useState('');
 
+  // Fetch all leaves for stats (no filter)
+  const fetchAllLeaves = useCallback(async () => {
+    try {
+      const response = await leaveService.getAllLeaves({});
+      setAllLeaves(response.data.leaves);
+    } catch (error) {
+      console.error('Failed to fetch all leaves for stats:', error);
+    }
+  }, []);
+
+  // Fetch filtered leaves for display
   const fetchLeaves = useCallback(async () => {
     try {
       setLoading(true);
       const params = filter ? { status: filter } : {};
       const response = await leaveService.getAllLeaves(params);
       setLeaves(response.data.leaves);
+      // Also fetch all leaves for accurate stats
+      await fetchAllLeaves();
     } catch (error) {
       setMessage({ 
         type: 'error', 
@@ -25,11 +39,21 @@ const AdminLeaves = () => {
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, [filter, fetchAllLeaves]);
 
   useEffect(() => {
     fetchLeaves();
   }, [fetchLeaves]);
+
+  // Auto-dismiss success/error messages after 5 seconds
+  useEffect(() => {
+    if (message.text) {
+      const timer = setTimeout(() => {
+        setMessage({ type: '', text: '' });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   const handleUpdateStatus = async (leaveId, status) => {
     setProcessing(leaveId);
@@ -63,10 +87,11 @@ const AdminLeaves = () => {
   };
 
   const getStatusCounts = () => {
-    const pending = leaves.filter(l => l.status === 'pending').length;
-    const approved = leaves.filter(l => l.status === 'approved').length;
-    const rejected = leaves.filter(l => l.status === 'rejected').length;
-    return { pending, approved, rejected, total: leaves.length };
+    // Calculate stats from all leaves, not just filtered ones
+    const pending = allLeaves.filter(l => l.status === 'pending').length;
+    const approved = allLeaves.filter(l => l.status === 'approved').length;
+    const rejected = allLeaves.filter(l => l.status === 'rejected').length;
+    return { pending, approved, rejected, total: allLeaves.length };
   };
 
   const stats = getStatusCounts();
