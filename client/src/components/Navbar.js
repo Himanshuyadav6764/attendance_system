@@ -27,14 +27,14 @@ const Navbar = () => {
             <Link to="/" className="nav-link">Dashboard</Link>
             {isAdmin ? (
               <>
-                <Link to="/hod/calendar" className="nav-link">Calendar</Link>
-                <Link to="/hod/attendance" className="nav-link">All Attendance</Link>
+                <Link to="/hod/calendar" className="nav-link">View Attendance</Link>
+                <Link to="/hod/attendance" className="nav-link">Attendance Records</Link>
                 <Link to="/hod/leaves" className="nav-link">Leave Requests</Link>
               </>
             ) : (
               <>
-                <Link to="/attendance" className="nav-link">My Attendance</Link>
-                <Link to="/leaves" className="nav-link">My Leaves</Link>
+                <Link to="/attendance" className="nav-link">Mark Attendance</Link>
+                <Link to="/leaves" className="nav-link">Mark Leave</Link>
               </>
             )}
           </div>
