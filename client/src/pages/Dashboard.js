@@ -138,12 +138,12 @@ const Dashboard = () => {
       action: () => navigate('/hod/attendance')
     },
     {
-      title: 'Reports',
-      description: 'Generate attendance reports',
-      icon: 'REPORT',
+      title: 'My Profile',
+      description: 'Manage account and settings',
+      icon: 'PROFILE',
       color: '#ef5350',
       colorLight: '#f44336',
-      action: () => navigate('/hod/attendance')
+      action: () => navigate('/hod/profile')
     }
   ];
 

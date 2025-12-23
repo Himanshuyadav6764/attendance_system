@@ -10,6 +10,7 @@ import StudentAttendance from './pages/StudentAttendance';
 import StudentLeaves from './pages/StudentLeaves';
 import AdminAttendance from './pages/AdminAttendance';
 import AdminLeaves from './pages/AdminLeaves';
+import HodProfile from './pages/HodProfile';
 import './App.css';
 
 function AppRoutes() {
@@ -71,6 +72,14 @@ function AppRoutes() {
           element={
             <PrivateRoute requiredRole="hod">
               <AdminLeaves />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/hod/profile"
+          element={
+            <PrivateRoute requiredRole="hod">
+              <HodProfile />
             </PrivateRoute>
           }
         />

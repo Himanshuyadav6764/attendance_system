@@ -33,6 +33,21 @@ export const authService = {
     return response.data;
   },
 
+  // Update profile
+  updateProfile: async (profileData) => {
+    const response = await api.put('/auth/profile', profileData);
+    if (response.data.success && response.data.data.user) {
+      localStorage.setItem('user', JSON.stringify(response.data.data.user));
+    }
+    return response.data;
+  },
+
+  // Change password
+  changePassword: async (passwordData) => {
+    const response = await api.put('/auth/change-password', passwordData);
+    return response.data;
+  },
+
   // Get current user from localStorage
   getCurrentUser: () => {
     const user = localStorage.getItem('user');
