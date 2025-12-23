@@ -78,7 +78,7 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               className="input-field"
-              placeholder={activeTab === 'hod' ? 'Enter your HOD ID (e.g., HOD_IT_001)' : 'Enter your email'}
+              placeholder={activeTab === 'hod' ? '' : 'Enter your email'}
               required
             />
           </div>

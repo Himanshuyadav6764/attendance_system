@@ -37,15 +37,17 @@
 }
 
 .auth-header h1 {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 900;
   color: var(--text-primary);
   margin-bottom: var(--spacing-xs);
+  letter-spacing: -0.5px;
 }
 
 .auth-header p {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: 600;
   margin-bottom: var(--spacing-lg);
 }
 
