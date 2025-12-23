@@ -2,33 +2,34 @@ const mongoose = require('mongoose');
 const User = require('./models/User');
 require('dotenv').config();
 
-// Multiple HOD credentials - Add as many as you want
+// Initial HOD accounts for setup only
+// After seeding, new HODs should register through the registration page
 const HOD_ACCOUNTS = [
   {
-    name: 'Head of Department - CS',
+    name: 'HOD - Computer Science',
     email: 'hod.cs@college.com',
-    password: 'HOD123',
+    password: 'HOD@CS123', // Will be hashed automatically
     department: 'Computer Science',
     role: 'hod'
   },
   {
-    name: 'Head of Department - IT',
+    name: 'HOD - Information Technology',
     email: 'hod.it@college.com',
-    password: 'HOD123',
+    password: 'HOD@IT123',
     department: 'Information Technology',
     role: 'hod'
   },
   {
-    name: 'Head of Department - ECE',
+    name: 'HOD - Electronics & Communication',
     email: 'hod.ece@college.com',
-    password: 'HOD123',
+    password: 'HOD@ECE123',
     department: 'Electronics & Communication',
     role: 'hod'
   },
   {
-    name: 'Head of Department - ME',
+    name: 'HOD - Mechanical Engineering',
     email: 'hod.me@college.com',
-    password: 'HOD123',
+    password: 'HOD@ME123',
     department: 'Mechanical Engineering',
     role: 'hod'
   }
@@ -38,16 +39,17 @@ const seedMultipleHODs = async () => {
   try {
     // Connect to MongoDB
     await mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI);
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB\n');
 
-    console.log('\nStarting HOD account creation...\n');
+    console.log('Starting HOD account creation...\n');
+    console.log('===========================================');
 
     for (const hodData of HOD_ACCOUNTS) {
       // Check if HOD already exists
       const existingHOD = await User.findOne({ email: hodData.email });
       
       if (existingHOD) {
-        console.log(`HOD already exists: ${hodData.email}`);
+        console.log(`Already exists: ${hodData.email}`);
         
         // Update existing HOD
         existingHOD.name = hodData.name;
@@ -55,24 +57,30 @@ const seedMultipleHODs = async () => {
         existingHOD.department = hodData.department;
         existingHOD.role = 'hod';
         await existingHOD.save();
-        console.log(`Updated: ${hodData.name} (${hodData.department})`);
+        console.log(`Updated: ${hodData.name}`);
       } else {
         // Create new HOD user
         const hod = new User(hodData);
         await hod.save();
-        console.log(`Created: ${hodData.name} (${hodData.department})`);
+        console.log(`Created: ${hodData.name}`);
       }
     }
 
-    console.log('\nAll HOD accounts processed successfully!');
-    console.log('\nHOD Credentials:');
-    console.log('=====================================');
+    console.log('\n===========================================');
+    console.log('All HOD accounts processed successfully!');
+    console.log('===========================================\n');
+    console.log('Initial Login Credentials:');
+    console.log('-------------------------------------------');
     HOD_ACCOUNTS.forEach(hod => {
-      console.log(`\nDepartment: ${hod.department}`);
-      console.log(`Email: ${hod.email}`);
-      console.log(`Password: ${hod.password}`);
+      console.log(`\n${hod.department}`);
+      console.log(`  Email: ${hod.email}`);
+      console.log(`  Password: ${hod.password}`);
     });
-    console.log('\n=====================================');
+    console.log('\n===========================================');
+    console.log('\nIMPORTANT NOTES:');
+    console.log('1. Change passwords after first login!');
+    console.log('2. New HODs should register through registration page');
+    console.log('3. Keep these credentials secure\n');
 
     process.exit(0);
   } catch (error) {

@@ -21,6 +21,29 @@ exports.register = async (req, res) => {
       });
     }
 
+    // Validate role
+    if (role && !['student', 'hod'].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid role. Must be either student or hod'
+      });
+    }
+
+    // Check required fields based on role
+    if (role === 'student' && !rollNumber) {
+      return res.status(400).json({
+        success: false,
+        message: 'Roll number is required for student registration'
+      });
+    }
+
+    if (role === 'hod' && !department) {
+      return res.status(400).json({
+        success: false,
+        message: 'Department is required for HOD registration'
+      });
+    }
+
     // Check if someone already registered with this email
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -30,7 +53,7 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Prepare user data - only include rollNumber and department for students
+    // Prepare user data
     const userData = {
       name,
       email,
@@ -38,9 +61,11 @@ exports.register = async (req, res) => {
       role: role || 'student' // Default to student if role not specified
     };
     
-    // Add student-specific fields only if role is student
+    // Add role-specific fields
     if (userData.role === 'student') {
       userData.rollNumber = rollNumber;
+      userData.department = department;
+    } else if (userData.role === 'hod') {
       userData.department = department;
     }
     
@@ -52,7 +77,7 @@ exports.register = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Account created successfully! Welcome!',
+      message: `${userData.role === 'hod' ? 'HOD' : 'Student'} account created successfully! Welcome!`,
       data: {
         user: {
           id: newUser._id,

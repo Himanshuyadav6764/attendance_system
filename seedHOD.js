@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 const User = require('./models/User');
 require('dotenv').config();
 
-// HOD credentials
+// HOD credentials - Only for initial setup
+// After this, HODs should register through the registration page
 const HOD_CREDENTIALS = {
   name: 'Head of Department',
-  email: 'HOD123123@gmail.com',
-  password: 'HOD123',
+  email: 'hod@college.com',
+  password: 'HOD@123456', // This will be hashed automatically
+  department: 'Computer Science',
   role: 'hod'
 };
 
@@ -26,6 +28,7 @@ const seedHOD = async () => {
       // Update existing HOD if needed
       existingHOD.name = HOD_CREDENTIALS.name;
       existingHOD.password = HOD_CREDENTIALS.password;
+      existingHOD.department = HOD_CREDENTIALS.department;
       existingHOD.role = 'hod';
       await existingHOD.save();
       console.log('HOD user updated successfully');
@@ -36,10 +39,15 @@ const seedHOD = async () => {
       console.log('HOD user created successfully');
     }
 
-    console.log('\nHOD Credentials:');
+    console.log('\n===========================================');
+    console.log('Initial HOD Account Created!');
+    console.log('===========================================');
     console.log('Email:', HOD_CREDENTIALS.email);
     console.log('Password:', HOD_CREDENTIALS.password);
-    console.log('Role: HOD');
+    console.log('Department:', HOD_CREDENTIALS.department);
+    console.log('===========================================');
+    console.log('\nIMPORTANT: For security, change this password after first login!');
+    console.log('New HODs should register through the registration page.\n');
 
     process.exit(0);
   } catch (error) {

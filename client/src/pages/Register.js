@@ -6,16 +6,32 @@ import './Auth.css';
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const [activeTab, setActiveTab] = useState('student');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     role: 'student',
     rollNumber: '',
     department: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleTabChange = (role) => {
+    setActiveTab(role);
+    setFormData({
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: role,
+      rollNumber: '',
+      department: ''
+    });
+    setError('');
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -36,8 +52,15 @@ const Register = () => {
       return;
     }
 
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
     try {
-      await register(formData);
+      const { confirmPassword, ...registrationData } = formData;
+      await register(registrationData);
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
@@ -52,6 +75,23 @@ const Register = () => {
         <div className="auth-header">
           <h1>Create Account</h1>
           <p>Join our attendance management system</p>
+          
+          <div className="auth-tabs">
+            <button 
+              className={`auth-tab ${activeTab === 'student' ? 'active' : ''}`}
+              onClick={() => handleTabChange('student')}
+              type="button"
+            >
+              Student Registration
+            </button>
+            <button 
+              className={`auth-tab ${activeTab === 'hod' ? 'active' : ''}`}
+              onClick={() => handleTabChange('hod')}
+              type="button"
+            >
+              HOD Registration
+            </button>
+          </div>
         </div>
 
         {error && (
@@ -84,10 +124,58 @@ const Register = () => {
               value={formData.email}
               onChange={handleChange}
               className="input-field"
-              placeholder="Enter your email"
+              placeholder={activeTab === 'hod' ? 'Enter your official email' : 'Enter your email'}
               required
             />
           </div>
+
+          {activeTab === 'student' && (
+            <>
+              <div className="input-group">
+                <label htmlFor="rollNumber" className="input-label">Roll Number</label>
+                <input
+                  type="text"
+                  id="rollNumber"
+                  name="rollNumber"
+                  value={formData.rollNumber}
+                  onChange={handleChange}
+                  className="input-field"
+                  placeholder="Enter your roll number"
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="department" className="input-label">Department</label>
+                <input
+                  type="text"
+                  id="department"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  className="input-field"
+                  placeholder="e.g. Computer Science"
+                  required
+                />
+              </div>
+            </>
+          )}
+
+          {activeTab === 'hod' && (
+            <div className="input-group">
+              <label htmlFor="department" className="input-label">Department</label>
+              <input
+                type="text"
+                id="department"
+                name="department"
+                value={formData.department}
+                onChange={handleChange}
+                className="input-field"
+                placeholder="e.g. Computer Science, Mechanical Engineering"
+                required
+              />
+            </div>
+          )}
 
           <div className="input-group">
             <label htmlFor="password" className="input-label">Password</label>
@@ -104,50 +192,18 @@ const Register = () => {
           </div>
 
           <div className="input-group">
-            <label htmlFor="role" className="input-label">Role</label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
+            <label htmlFor="confirmPassword" className="input-label">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
               onChange={handleChange}
               className="input-field"
+              placeholder="Re-enter your password"
               required
-              disabled
-            >
-              <option value="student">Student</option>
-              <option value="hod">HOD</option>
-            </select>
+            />
           </div>
-
-          {formData.role === 'student' && (
-            <>
-              <div className="input-group">
-                <label htmlFor="rollNumber" className="input-label">Roll Number</label>
-                <input
-                  type="text"
-                  id="rollNumber"
-                  name="rollNumber"
-                  value={formData.rollNumber}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="Enter your roll number"
-                />
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="department" className="input-label">Department</label>
-                <input
-                  type="text"
-                  id="department"
-                  name="department"
-                  value={formData.department}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="Enter your department"
-                />
-              </div>
-            </>
-          )}
 
           <button 
             type="submit" 
