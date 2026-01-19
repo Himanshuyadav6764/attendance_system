@@ -6,7 +6,7 @@ const createHodId = async () => {
   try {
     // Connect to MongoDB
     await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/attendance-leave-db');
-    console.log('✓ Database connected');
+    console.log('[SUCCESS] Database connected');
 
     // Create HOD ID record
     const hodIdData = {
@@ -29,8 +29,8 @@ const createHodId = async () => {
 
     // Create new HOD ID
     const newHodId = await HodId.create(hodIdData);
-    console.log('✓ HOD ID created successfully!');
-    console.log('\n📋 HOD ID Details:');
+    console.log('[SUCCESS] HOD ID created successfully!');
+    console.log('\nHOD ID Details:');
     console.log('HOD ID:', newHodId.hodId);
     console.log('Name:', newHodId.name);
     console.log('Department:', newHodId.department);

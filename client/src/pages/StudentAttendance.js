@@ -94,7 +94,7 @@ const StudentAttendance = () => {
         <div className="card mark-attendance-card disabled-section">
           <div className="disabled-overlay">
             <div className="disabled-message">
-              <h3>⚠️ Attendance Marking Disabled</h3>
+              <h3>Attendance Marking Disabled</h3>
               <p>Your teacher will mark attendance for you. You can view your attendance records below.</p>
             </div>
           </div>
