@@ -12,6 +12,7 @@ import AdminAttendance from './pages/AdminAttendance';
 import AdminLeaves from './pages/AdminLeaves';
 import HodProfile from './pages/HodProfile';
 import AttendanceCalendar from './pages/AttendanceCalendar';
+import TeacherMarkAttendance from './pages/TeacherMarkAttendance';
 import './App.css';
 
 function AppRoutes() {
@@ -59,35 +60,43 @@ function AppRoutes() {
           }
         />
 
-        {/* HOD-only pages */}
+        {/* Teacher-only pages */}
         <Route
-          path="/hod/attendance"
+          path="/teacher/mark-attendance"
           element={
-            <PrivateRoute requiredRole="hod">
+            <PrivateRoute requiredRole="teacher">
+              <TeacherMarkAttendance />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/teacher/attendance"
+          element={
+            <PrivateRoute requiredRole="teacher">
               <AdminAttendance />
             </PrivateRoute>
           }
         />
         <Route
-          path="/hod/leaves"
+          path="/teacher/leaves"
           element={
-            <PrivateRoute requiredRole="hod">
+            <PrivateRoute requiredRole="teacher">
               <AdminLeaves />
             </PrivateRoute>
           }
         />
         <Route
-          path="/hod/calendar"
+          path="/teacher/calendar"
           element={
-            <PrivateRoute requiredRole="hod">
+            <PrivateRoute requiredRole="teacher">
               <AttendanceCalendar />
             </PrivateRoute>
           }
         />
         <Route
-          path="/hod/profile"
+          path="/teacher/profile"
           element={
-            <PrivateRoute requiredRole="hod">
+            <PrivateRoute requiredRole="teacher">
               <HodProfile />
             </PrivateRoute>
           }

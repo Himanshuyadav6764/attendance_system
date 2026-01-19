@@ -25,17 +25,17 @@ router.get('/', authenticate, authorize('student'), getMyLeaves);
 
 /**
  * @route   GET /api/leave/all
- * @desc    Get all leave applications (HOD)
- * @access  Private (HOD)
+ * @desc    Get all leave applications (Teacher)
+ * @access  Private (Teacher)
  */
-router.get('/all', authenticate, authorize('hod'), getAllLeaves);
+router.get('/all', authenticate, authorize('teacher'), getAllLeaves);
 
 /**
- * @route   PATCH /api/leave/:id
- * @desc    Update leave status (approve/reject)
- * @access  Private (HOD)
+ * @route   PATCH /api/leaves/:id
+ * @desc    Update leave application status (approve/reject)
+ * @access  Private (Teacher)
  */
-router.patch('/:id', authenticate, authorize('hod'), updateLeaveStatus);
+router.patch('/:id', authenticate, authorize('teacher'), updateLeaveStatus);
 
 /**
  * @route   DELETE /api/leave/:id

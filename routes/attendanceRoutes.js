@@ -4,7 +4,9 @@ const {
   markAttendance,
   getMyAttendance,
   getAllAttendance,
-  getAttendanceStats
+  getAttendanceStats,
+  getStudentsForAttendance,
+  markBulkAttendance
 } = require('../controllers/attendanceController');
 const { authenticate, authorize } = require('../middleware/auth');
 
@@ -24,16 +26,30 @@ router.get('/', authenticate, authorize('student'), getMyAttendance);
 
 /**
  * @route   GET /api/attendance/all
- * @desc    Get all attendance records (filtered by department for HOD)
- * @access  Private (Admin/HOD)
+ * @desc    Get all attendance records (filtered by department for Teacher)
+ * @access  Private (Admin/Teacher)
  */
-router.get('/all', authenticate, authorize('admin', 'hod'), getAllAttendance);
+router.get('/all', authenticate, authorize('admin', 'teacher'), getAllAttendance);
 
 /**
  * @route   GET /api/attendance/stats
- * @desc    Get attendance statistics (HOD)
- * @access  Private (HOD)
+ * @desc    Get attendance statistics (Teacher)
+ * @access  Private (Teacher)
  */
-router.get('/stats', authenticate, authorize('hod'), getAttendanceStats);
+router.get('/stats', authenticate, authorize('teacher'), getAttendanceStats);
+
+/**
+ * @route   GET /api/attendance/students
+ * @desc    Get list of students for marking attendance (Teacher only)
+ * @access  Private (Teacher)
+ */
+router.get('/students', authenticate, authorize('teacher'), getStudentsForAttendance);
+
+/**
+ * @route   POST /api/attendance/bulk
+ * @desc    Mark attendance for multiple students (Teacher only)
+ * @access  Private (Teacher)
+ */
+router.post('/bulk', authenticate, authorize('teacher'), markBulkAttendance);
 
 module.exports = router;

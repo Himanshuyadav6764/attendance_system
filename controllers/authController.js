@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const HodId = require('../models/HodId');
+const TeacherId = require('../models/HodId'); // Will rename model file later
 const jwt = require('jsonwebtoken');
 
 // Create a login token for the user (like a temporary ID card that expires)
@@ -9,27 +9,27 @@ const generateToken = (userId) => {
   });
 };
 
-// Validate HOD ID - Check if it exists in ids collection
-exports.validateHodId = async (req, res) => {
+// Validate Teacher ID - Check if it exists in ids collection
+exports.validateTeacherId = async (req, res) => {
   try {
-    const { hodId } = req.body;
+    const { teacherId } = req.body;
 
-    if (!hodId) {
+    if (!teacherId) {
       return res.status(400).json({
         success: false,
-        message: 'HOD ID is required'
+        message: 'Teacher ID is required'
       });
     }
 
-    // Check if HOD ID exists in ids collection
-    const existingHodId = await HodId.findOne({ hodId: hodId.trim() });
+    // Check if Teacher ID exists in ids collection
+    const existingTeacherId = await TeacherId.findOne({ hodId: teacherId.trim() });
 
-    if (existingHodId) {
+    if (existingTeacherId) {
       // Check if already registered
-      if (existingHodId.isRegistered) {
+      if (existingTeacherId.isRegistered) {
         return res.status(400).json({
           success: false,
-          message: 'This HOD ID is already registered. Please login instead.',
+          message: 'This Teacher ID is already registered. Please login instead.',
           data: {
             valid: false,
             alreadyRegistered: true
@@ -39,17 +39,17 @@ exports.validateHodId = async (req, res) => {
 
       return res.status(200).json({
         success: true,
-        message: 'Valid HOD ID',
+        message: 'Valid Teacher ID',
         data: {
           valid: true,
-          department: existingHodId.department,
+          department: existingTeacherId.department,
           alreadyRegistered: false
         }
       });
     } else {
       return res.status(404).json({
         success: false,
-        message: 'Invalid HOD ID. Please contact admin for correct HOD ID.',
+        message: 'Invalid Teacher ID. Please contact admin for correct Teacher ID.',
         data: {
           valid: false
         }
@@ -86,10 +86,10 @@ exports.register = async (req, res) => {
     }
 
     // Validate role
-    if (role && !['student', 'hod'].includes(role)) {
+    if (role && !['student', 'teacher'].includes(role)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid role. Must be either student or hod'
+        message: 'Invalid role. Must be either student or teacher'
       });
     }
 
@@ -101,39 +101,39 @@ exports.register = async (req, res) => {
       });
     }
 
-    if (role === 'hod' && !department) {
+    if (role === 'teacher' && !department) {
       return res.status(400).json({
         success: false,
-        message: 'Department is required for HOD registration'
+        message: 'Department is required for Teacher registration'
       });
     }
 
-    // For HOD registration, validate HOD ID and Department match
-    if (role === 'hod') {
-      const { hodId } = req.body;
+    // For Teacher registration, validate Teacher ID and Department match
+    if (role === 'teacher') {
+      const { teacherId } = req.body;
       
-      if (!hodId) {
+      if (!teacherId) {
         return res.status(400).json({
           success: false,
-          message: 'HOD ID is required for HOD registration'
+          message: 'Teacher ID is required for Teacher registration'
         });
       }
 
-      // Check if HOD ID exists in ids collection
-      const hodIdRecord = await HodId.findOne({ hodId: hodId.trim() });
+      // Check if Teacher ID exists in ids collection
+      const teacherIdRecord = await TeacherId.findOne({ hodId: teacherId.trim() });
       
-      if (!hodIdRecord) {
+      if (!teacherIdRecord) {
         return res.status(400).json({
           success: false,
-          message: 'HOD ID not found in database. Please contact admin for correct HOD ID.'
+          message: 'Teacher ID not found in database. Please contact admin for correct Teacher ID.'
         });
       }
 
-      // Check if HOD ID and Department match
-      if (hodIdRecord.department !== department) {
+      // Check if Teacher ID and Department match
+      if (teacherIdRecord.department !== department) {
         return res.status(400).json({
           success: false,
-          message: 'HOD ID and Department do not match. Please check your details.'
+          message: 'Teacher ID and Department do not match. Please check your details.'
         });
       }
 
@@ -146,49 +146,49 @@ exports.register = async (req, res) => {
         });
       }
 
-      // Save password to HodId collection
-      hodIdRecord.password = password;
-      hodIdRecord.isRegistered = true;
-      await hodIdRecord.save();
+      // Save password to TeacherId collection
+      teacherIdRecord.password = password;
+      teacherIdRecord.isRegistered = true;
+      await teacherIdRecord.save();
 
-      // Use predefined name from HodId collection
-      const hodName = hodIdRecord.name || name || 'HOD';
+      // Use predefined name from TeacherId collection
+      const teacherName = teacherIdRecord.name || name || 'Teacher';
 
-      // Create new HOD user
-      const newHOD = await User.create({
-        name: hodName,
+      // Create new Teacher user
+      const newTeacher = await User.create({
+        name: teacherName,
         email,
         password,
-        role: 'hod',
-        hodId: hodId.trim(),
+        role: 'teacher',
+        teacherId: teacherId.trim(),
         department
       });
 
-      // Update registeredUserId in HodId collection
-      hodIdRecord.registeredUserId = newHOD._id;
-      await hodIdRecord.save();
+      // Update registeredUserId in TeacherId collection
+      teacherIdRecord.registeredUserId = newTeacher._id;
+      await teacherIdRecord.save();
 
-      console.log('HOD Registration successful:', { 
-        hodId: newHOD.hodId, 
-        email: newHOD.email,
-        role: newHOD.role,
+      console.log('Teacher Registration successful:', { 
+        teacherId: newTeacher.teacherId, 
+        email: newTeacher.email,
+        role: newTeacher.role,
         passwordSavedInIds: true
       });
 
       // Give them a login token
-      const loginToken = generateToken(newHOD._id);
+      const loginToken = generateToken(newTeacher._id);
 
       return res.status(201).json({
         success: true,
-        message: 'HOD account registered successfully! You can now login with your HOD ID.',
+        message: 'Teacher account registered successfully! You can now login with your Teacher ID.',
         data: {
           user: {
-            id: newHOD._id,
-            name: newHOD.name,
-            email: newHOD.email,
-            role: newHOD.role,
-            hodId: newHOD.hodId,
-            department: newHOD.department
+            id: newTeacher._id,
+            name: newTeacher.name,
+            email: newTeacher.email,
+            role: newTeacher.role,
+            teacherId: newTeacher.teacherId,
+            department: newTeacher.department
           },
           token: loginToken
         }
@@ -229,7 +229,7 @@ exports.register = async (req, res) => {
           name: newUser.name,
           email: newUser.email,
           role: newUser.role,
-          hodId: newUser.hodId,
+          teacherId: newUser.teacherId,
           rollNumber: newUser.rollNumber,
           department: newUser.department
         },
@@ -261,47 +261,47 @@ exports.login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
 
-    // Make sure they entered both email/HOD ID and password
+    // Make sure they entered both email/Teacher ID and password
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please enter both email/HOD ID and password'
+        message: 'Please enter both email/Teacher ID and password'
       });
     }
 
-    // For HOD: login with HOD ID only
+    // For Teacher: login with Teacher ID only
     // For Student: login with email
     let user;
-    if (role === 'hod') {
-      // HOD login - check password from HodId collection
-      const hodIdToSearch = email.trim();
-      const hodIdRecord = await HodId.findOne({ hodId: hodIdToSearch }).select('+password');
+    if (role === 'teacher') {
+      // Teacher login - check password from TeacherId collection
+      const teacherIdToSearch = email.trim();
+      const teacherIdRecord = await TeacherId.findOne({ hodId: teacherIdToSearch }).select('+password');
       
-      console.log('HOD Login attempt:', { hodIdToSearch, hodIdRecordFound: !!hodIdRecord });
+      console.log('Teacher Login attempt:', { teacherIdToSearch, teacherIdRecordFound: !!teacherIdRecord });
       
-      if (!hodIdRecord || !hodIdRecord.password) {
+      if (!teacherIdRecord || !teacherIdRecord.password) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid HOD ID or password'
+          message: 'Invalid Teacher ID or password'
         });
       }
 
-      // Check if the password matches from HodId collection
-      const isPasswordCorrect = await hodIdRecord.comparePassword(password);
+      // Check if the password matches from TeacherId collection
+      const isPasswordCorrect = await teacherIdRecord.comparePassword(password);
       if (!isPasswordCorrect) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid HOD ID or password'
+          message: 'Invalid Teacher ID or password'
         });
       }
 
       // Get user details from User collection
-      user = await User.findOne({ hodId: hodIdToSearch, role: 'hod' });
+      user = await User.findOne({ teacherId: teacherIdToSearch, role: 'teacher' });
       
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid HOD ID or password'
+          message: 'Invalid Teacher ID or password'
         });
       }
     } else {
@@ -337,7 +337,7 @@ exports.login = async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
-          hodId: user.hodId,
+          teacherId: user.teacherId,
           rollNumber: user.rollNumber,
           department: user.department
         },

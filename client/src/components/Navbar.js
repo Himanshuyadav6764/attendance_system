@@ -27,9 +27,9 @@ const Navbar = () => {
             <Link to="/" className="nav-link">Dashboard</Link>
             {isAdmin ? (
               <>
-                <Link to="/hod/calendar" className="nav-link">View Attendance</Link>
-                <Link to="/hod/attendance" className="nav-link">Attendance Records</Link>
-                <Link to="/hod/leaves" className="nav-link">Leave Requests</Link>
+                <Link to="/teacher/mark-attendance" className="nav-link">Mark Attendance</Link>
+                <Link to="/teacher/calendar" className="nav-link">View Attendance</Link>
+                <Link to="/teacher/leaves" className="nav-link">Leave Requests</Link>
               </>
             ) : (
               <>

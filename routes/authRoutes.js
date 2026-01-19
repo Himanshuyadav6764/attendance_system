@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getMe, updateProfile, changePassword, validateHodId } = require('../controllers/authController');
+const { register, login, getMe, updateProfile, changePassword, validateTeacherId } = require('../controllers/authController');
 const { authenticate } = require('../middleware/auth');
 
 /**
- * @route   POST /api/auth/validate-hod-id
- * @desc    Validate if HOD ID exists
+ * @route   POST /api/auth/validate-teacher-id
+ * @desc    Validate if Teacher ID exists
  * @access  Public
  */
-router.post('/validate-hod-id', validateHodId);
+router.post('/validate-teacher-id', validateTeacherId);
 
 /**
  * @route   POST /api/auth/register

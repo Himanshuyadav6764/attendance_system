@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     isAuthenticated: !!user, // Is someone logged in?
-    isAdmin: user?.role === 'hod', // Is logged in user a HOD?
+    isAdmin: user?.role === 'teacher', // Is logged in user a Teacher?
     isStudent: user?.role === 'student' // Is logged in user a student?
   };
 

@@ -25,15 +25,15 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['student', 'hod'],
+    enum: ['student', 'teacher'],
     default: 'student'
   },
-  hodId: {
+  teacherId: {
     type: String,
     sparse: true,
     trim: true,
     required: function() {
-      return this.role === 'hod';
+      return this.role === 'teacher';
     }
   },
   rollNumber: {
@@ -69,33 +69,33 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-// Generate HOD ID automatically for HOD users
+// Generate Teacher ID automatically for Teacher users
 userSchema.pre('save', async function(next) {
-  // Only generate HOD ID if it's a HOD and ID not already set
-  if (this.role === 'hod' && !this.hodId && this.isNew) {
+  // Only generate Teacher ID if it's a Teacher and ID not already set
+  if (this.role === 'teacher' && !this.teacherId && this.isNew) {
     try {
       // Create department abbreviation (first 3 letters, uppercase)
       const deptAbbr = this.department 
         ? this.department.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, '')
         : 'GEN';
       
-      // Find the last HOD in this department
-      const lastHOD = await mongoose.model('User').findOne({
-        role: 'hod',
+      // Find the last Teacher in this department
+      const lastTeacher = await mongoose.model('User').findOne({
+        role: 'teacher',
         department: this.department
       }).sort({ createdAt: -1 });
 
       let sequence = 1;
-      if (lastHOD && lastHOD.hodId) {
-        // Extract sequence number from last HOD ID
-        const match = lastHOD.hodId.match(/(\d+)$/);
+      if (lastTeacher && lastTeacher.teacherId) {
+        // Extract sequence number from last Teacher ID
+        const match = lastTeacher.teacherId.match(/(\d+)$/);
         if (match) {
           sequence = parseInt(match[1]) + 1;
         }
       }
 
-      // Generate HOD ID: HOD_DEPT_001
-      this.hodId = `HOD_${deptAbbr}_${sequence.toString().padStart(3, '0')}`;
+      // Generate Teacher ID: TCH_DEPT_001
+      this.teacherId = `TCH_${deptAbbr}_${sequence.toString().padStart(3, '0')}`;
     } catch (error) {
       return next(error);
     }

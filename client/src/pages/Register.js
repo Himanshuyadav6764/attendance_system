@@ -15,11 +15,11 @@ const Register = () => {
     role: 'student',
     rollNumber: '',
     department: '',
-    hodId: ''
+    teacherId: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [hodId, setHodId] = useState('');
+  const [teacherId, setTeacherId] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleTabChange = (role) => {
@@ -31,7 +31,7 @@ const Register = () => {
       role: role,
       rollNumber: '',
       department: '',
-      hodId: ''
+      teacherId: ''
     };
     
     // Only include name field for student role
@@ -42,7 +42,7 @@ const Register = () => {
     setFormData(baseFormData);
     setError('');
     setSuccess('');
-    setHodId('');
+    setTeacherId('');
   };
 
   const handleChange = (e) => {
@@ -116,11 +116,11 @@ const Register = () => {
               Student
             </button>
             <button 
-              className={`auth-tab ${activeTab === 'hod' ? 'active' : ''}`}
-              onClick={() => handleTabChange('hod')}
+              className={`auth-tab ${activeTab === 'teacher' ? 'active' : ''}`}
+              onClick={() => handleTabChange('teacher')}
               type="button"
             >
-              HOD
+              Teacher
             </button>
           </div>
         </div>
@@ -131,7 +131,7 @@ const Register = () => {
           </div>
         )}
 
-        {success && hodId && (
+        {success && teacherId && (
           <div className="alert alert-success">
             <div style={{ marginBottom: '10px' }}>{success}</div>
             <div style={{ 
@@ -142,10 +142,10 @@ const Register = () => {
               fontSize: '16px',
               color: '#1967d2'
             }}>
-              {hodId}
+              {teacherId}
             </div>
             <div style={{ marginTop: '8px', fontSize: '14px' }}>
-              Please save this HOD ID for login
+              Please save this Teacher ID for login
             </div>
           </div>
         )}
@@ -176,23 +176,23 @@ const Register = () => {
               value={formData.email}
               onChange={handleChange}
               className="input-field"
-              placeholder={activeTab === 'hod' ? 'Enter your official email' : 'Enter your email'}
+              placeholder={activeTab === 'teacher' ? 'Enter your official email' : 'Enter your email'}
               required
             />
           </div>
 
-          {activeTab === 'hod' && (
+          {activeTab === 'teacher' && (
             <>
               <div className="input-group">
-                <label htmlFor="hodId" className="input-label">HOD ID</label>
+                <label htmlFor="teacherId" className="input-label">Teacher ID</label>
                 <input
                   type="text"
-                  id="hodId"
-                  name="hodId"
-                  value={formData.hodId}
+                  id="teacherId"
+                  name="teacherId"
+                  value={formData.teacherId}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="Enter your assigned HOD ID"
+                  placeholder="Enter your assigned Teacher ID"
                   required
                 />
               </div>

@@ -10,7 +10,7 @@ dotenv.config();
 const authRoutes = require('./routes/authRoutes'); // Login and signup
 const attendanceRoutes = require('./routes/attendanceRoutes'); // Student attendance marking
 const leaveRoutes = require('./routes/leaveRoutes'); // Leave applications
-const hodRoutes = require('./routes/hodRoutes'); // HOD management
+const teacherRoutes = require('./routes/hodRoutes'); // Teacher management
 
 const app = express();
 
@@ -39,7 +39,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/auth', authRoutes); // Handles login/signup
 app.use('/api/attendance', attendanceRoutes); // Handles attendance marking
 app.use('/api/leave', leaveRoutes); // Handles leave requests
-app.use('/api/hod', hodRoutes); // Handles HOD management
+app.use('/api/teacher', teacherRoutes); // Handles Teacher management
 
 // Simple route to check if server is working
 app.get('/api/health', (req, res) => {

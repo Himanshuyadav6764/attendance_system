@@ -6,7 +6,7 @@ import './Auth.css';
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [activeTab, setActiveTab] = useState('hod');
+  const [activeTab, setActiveTab] = useState('teacher');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -46,10 +46,10 @@ const Login = () => {
           
           <div className="auth-tabs">
             <button 
-              className={`auth-tab ${activeTab === 'hod' ? 'active' : ''}`}
-              onClick={() => setActiveTab('hod')}
+              className={`auth-tab ${activeTab === 'teacher' ? 'active' : ''}`}
+              onClick={() => setActiveTab('teacher')}
             >
-              HOD
+              Teacher
             </button>
             <button 
               className={`auth-tab ${activeTab === 'student' ? 'active' : ''}`}
@@ -69,7 +69,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="input-group">
             <label htmlFor="email" className="input-label">
-              {activeTab === 'hod' ? 'HOD ID' : 'Email'}
+              {activeTab === 'teacher' ? 'Teacher ID' : 'Email'}
             </label>
             <input
               type="text"
@@ -78,7 +78,7 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               className="input-field"
-              placeholder={activeTab === 'hod' ? 'Enter HOD ID (provided by admin)' : 'Enter your email'}
+              placeholder={activeTab === 'teacher' ? 'Enter Teacher ID (provided by admin)' : 'Enter your email'}
               required
             />
           </div>

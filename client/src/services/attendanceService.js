@@ -13,15 +13,28 @@ export const attendanceService = {
     return response.data;
   },
 
-  // Get all attendance (HOD)
+  // Get all attendance (Teacher)
   getAllAttendance: async (params) => {
     const response = await api.get('/attendance/all', { params });
     return response.data;
   },
 
-  // Get attendance stats (HOD)
+  // Get attendance stats (Teacher)
   getAttendanceStats: async (params) => {
     const response = await api.get('/attendance/stats', { params });
     return response.data;
+  },
+
+  // Get students list for marking attendance (Teacher)
+  getStudentsForAttendance: async () => {
+    const response = await api.get('/attendance/students');
+    return response.data;
+  },
+
+  // Mark bulk attendance (Teacher)
+  markBulkAttendance: async (data) => {
+    const response = await api.post('/attendance/bulk', data);
+    return response.data;
   }
 };
+

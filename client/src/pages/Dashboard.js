@@ -23,7 +23,7 @@ const Dashboard = () => {
       setLoading(true);
       
       if (isAdmin) {
-        // Fetch admin/HOD stats
+        // Fetch admin/Teacher stats
         const [attendanceRes, leavesRes] = await Promise.all([
           attendanceService.getAllAttendance(),
           leaveService.getAllLeaves()
@@ -117,28 +117,28 @@ const Dashboard = () => {
 
   const adminCards = [
     {
+      title: 'Mark Attendance',
+      description: 'Mark attendance for students',
+      icon: 'CHECK',
+      color: '#4a7cff',
+      colorLight: '#6b94ff',
+      action: () => navigate('/teacher/mark-attendance')
+    },
+    {
       title: 'All Attendance',
       description: 'View all students attendance',
       icon: 'RECORDS',
-      color: '#4a7cff',
-      colorLight: '#6b94ff',
-      action: () => navigate('/hod/attendance')
+      color: '#5cb85c',
+      colorLight: '#7bc67e',
+      action: () => navigate('/teacher/attendance')
     },
     {
       title: 'Leave Requests',
       description: 'Approve or reject leave applications',
       icon: 'INBOX',
-      color: '#5cb85c',
-      colorLight: '#7bc67e',
-      action: () => navigate('/hod/leaves')
-    },
-    {
-      title: 'Statistics',
-      description: 'View attendance statistics',
-      icon: 'CHART',
       color: '#ffa726',
       colorLight: '#ffb74d',
-      action: () => navigate('/hod/attendance')
+      action: () => navigate('/teacher/leaves')
     },
     {
       title: 'My Profile',
@@ -146,7 +146,7 @@ const Dashboard = () => {
       icon: 'PROFILE',
       color: '#ef5350',
       colorLight: '#f44336',
-      action: () => navigate('/hod/profile')
+      action: () => navigate('/teacher/profile')
     }
   ];
 

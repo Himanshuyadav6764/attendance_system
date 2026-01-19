@@ -1,50 +1,50 @@
 const express = require('express');
 const router = express.Router();
 const {
-  createHOD,
-  getAllHODs,
-  updateHOD,
-  deleteHOD,
-  resetHODPassword
+  createHOD: createTeacher,
+  getAllHODs: getAllTeachers,
+  updateHOD: updateTeacher,
+  deleteHOD: deleteTeacher,
+  resetHODPassword: resetTeacherPassword
 } = require('../controllers/hodController');
 const { authenticate, authorize } = require('../middleware/auth');
 
 // All routes require authentication
-// Only HOD can access these routes
+// Only Teacher can access these routes
 
 /**
- * @route   POST /api/hod
- * @desc    Create a new HOD account
- * @access  Private (HOD only)
+ * @route   POST /api/teacher
+ * @desc    Create a new Teacher account
+ * @access  Private (Teacher only)
  */
-router.post('/', authenticate, authorize('hod'), createHOD);
+router.post('/', authenticate, authorize('teacher'), createTeacher);
 
 /**
- * @route   GET /api/hod
- * @desc    Get all HOD accounts
- * @access  Private (HOD only)
+ * @route   GET /api/teacher
+ * @desc    Get all Teacher accounts
+ * @access  Private (Teacher only)
  */
-router.get('/', authenticate, authorize('hod'), getAllHODs);
+router.get('/', authenticate, authorize('teacher'), getAllTeachers);
 
 /**
- * @route   PUT /api/hod/:id
- * @desc    Update HOD account details
- * @access  Private (HOD only)
+ * @route   PUT /api/teacher/:id
+ * @desc    Update Teacher account details
+ * @access  Private (Teacher only)
  */
-router.put('/:id', authenticate, authorize('hod'), updateHOD);
+router.put('/:id', authenticate, authorize('teacher'), updateTeacher);
 
 /**
- * @route   DELETE /api/hod/:id
- * @desc    Delete HOD account
- * @access  Private (HOD only)
+ * @route   DELETE /api/teacher/:id
+ * @desc    Delete Teacher account
+ * @access  Private (Teacher only)
  */
-router.delete('/:id', authenticate, authorize('hod'), deleteHOD);
+router.delete('/:id', authenticate, authorize('teacher'), deleteTeacher);
 
 /**
- * @route   PUT /api/hod/:id/reset-password
- * @desc    Reset HOD password
- * @access  Private (HOD only)
+ * @route   PUT /api/teacher/:id/reset-password
+ * @desc    Reset Teacher password
+ * @access  Private (Teacher only)
  */
-router.put('/:id/reset-password', authenticate, authorize('hod'), resetHODPassword);
+router.put('/:id/reset-password', authenticate, authorize('teacher'), resetTeacherPassword);
 
 module.exports = router;

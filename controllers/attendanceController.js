@@ -111,16 +111,16 @@ exports.getMyAttendance = async (req, res) => {
   }
 };
 
-// HOD can view all students' attendance records
+// Teacher can view all students' attendance records
 exports.getAllAttendance = async (req, res) => {
   try {
     const { startDate, endDate, userId, status, limit = 100, page = 1 } = req.query;
 
-    // Build search query based on what HOD wants to filter
+    // Build search query based on what Teacher wants to filter
     let searchQuery = {};
 
-    // If user is HOD, filter by their department only
-    if (req.user.role === 'hod') {
+    // If user is Teacher, filter by their department only
+    if (req.user.role === 'teacher') {
       // Find all users in the same department
       const User = require('../models/User');
       const departmentStudents = await User.find({
@@ -231,3 +231,112 @@ exports.getAttendanceStats = async (req, res) => {
     });
   }
 };
+
+// Get list of students for teacher to mark attendance (Teacher only)
+exports.getStudentsForAttendance = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const teacherDepartment = req.user.department;
+
+    // Get all students from teacher's department
+    const students = await User.find({
+      role: 'student',
+      department: teacherDepartment
+    })
+    .select('name email rollNumber department')
+    .sort({ rollNumber: 1 });
+
+    res.json({
+      success: true,
+      count: students.length,
+      data: {
+        students
+      }
+    });
+  } catch (error) {
+    console.error('Failed to get students:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Could not load students. Please try again',
+      error: error.message
+    });
+  }
+};
+
+// Mark bulk attendance for multiple students (Teacher only)
+exports.markBulkAttendance = async (req, res) => {
+  try {
+    const { attendance } = req.body; // Array of { studentId, status, date }
+    const teacherId = req.user._id;
+
+    if (!attendance || !Array.isArray(attendance) || attendance.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide attendance data for at least one student'
+      });
+    }
+
+    const results = {
+      success: [],
+      failed: [],
+      skipped: []
+    };
+
+    // Process each student's attendance
+    for (const record of attendance) {
+      try {
+        const { studentId, status, date } = record;
+
+        // Set date to midnight for consistency
+        const attendanceDate = new Date(date);
+        attendanceDate.setHours(0, 0, 0, 0);
+
+        // Check if attendance already exists for this student on this date
+        const existing = await Attendance.findOne({
+          user: studentId,
+          date: attendanceDate
+        });
+
+        if (existing) {
+          // Update existing record
+          existing.status = status;
+          existing.markedBy = teacherId;
+          existing.checkInTime = new Date();
+          await existing.save();
+          results.skipped.push({ studentId, message: 'Updated existing record' });
+        } else {
+          // Create new attendance record
+          const attendanceRecord = await Attendance.create({
+            user: studentId,
+            date: attendanceDate,
+            status: status,
+            markedBy: teacherId,
+            checkInTime: new Date()
+          });
+          results.success.push(studentId);
+        }
+      } catch (error) {
+        results.failed.push({ studentId: record.studentId, error: error.message });
+      }
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `Attendance marked for ${results.success.length + results.skipped.length} student(s)`,
+      data: {
+        marked: results.success.length,
+        updated: results.skipped.length,
+        failed: results.failed.length,
+        details: results
+      }
+    });
+  } catch (error) {
+    console.error('Failed to mark bulk attendance:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to mark attendance. Please try again',
+      error: error.message
+    });
+  }
+};
+
