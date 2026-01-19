@@ -76,7 +76,6 @@ exports.getMyAttendance = async (req, res) => {
       .populate('user', 'name email rollNumber');
 
     const statistics = {
-    const statistics = {
       total: attendanceRecords.length,
       present: attendanceRecords.filter(record => record.status === 'present').length,
       absent: attendanceRecords.filter(record => record.status === 'absent').length,
