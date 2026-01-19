@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-// Use environment variable or default to /api for production (Vercel deployment)
 const API_URL = process.env.REACT_APP_API_URL || '/api';
 
-// Create axios instance
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -12,7 +10,6 @@ const api = axios.create({
   withCredentials: false
 });
 
-// Add token to requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -26,14 +23,17 @@ api.interceptors.request.use(
   }
 );
 
-// Handle response errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
