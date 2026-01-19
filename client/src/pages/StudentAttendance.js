@@ -6,12 +6,7 @@ const StudentAttendance = () => {
   const [attendance, setAttendance] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [marking, setMarking] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [formData, setFormData] = useState({
-    status: 'present',
-    remarks: ''
-  });
 
   useEffect(() => {
     fetchAttendance();
@@ -30,26 +25,6 @@ const StudentAttendance = () => {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleMarkAttendance = async (e) => {
-    e.preventDefault();
-    setMarking(true);
-    setMessage({ type: '', text: '' });
-
-    try {
-      const response = await attendanceService.markAttendance(formData);
-      setMessage({ type: 'success', text: response.message });
-      setFormData({ status: 'present', remarks: '' });
-      fetchAttendance();
-    } catch (error) {
-      setMessage({ 
-        type: 'error', 
-        text: error.response?.data?.message || 'Failed to mark attendance' 
-      });
-    } finally {
-      setMarking(false);
     }
   };
 
@@ -90,55 +65,6 @@ const StudentAttendance = () => {
           </div>
         )}
 
-        {/* Mark Attendance Card - DISABLED */}
-        <div className="card mark-attendance-card disabled-section">
-          <div className="disabled-overlay">
-            <div className="disabled-message">
-              <h3>Attendance Marking Disabled</h3>
-              <p>Your teacher will mark attendance for you. You can view your attendance records below.</p>
-            </div>
-          </div>
-          <h2>Mark Today's Attendance</h2>
-          <form onSubmit={handleMarkAttendance} className="mark-attendance-form">
-            <div className="form-row">
-              <div className="input-group">
-                <label className="input-label">Status</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="input-field"
-                  required
-                >
-                  <option value="present">Present</option>
-                  <option value="late">Late</option>
-                </select>
-              </div>
-
-              <div className="input-group">
-                <label className="input-label">Remarks (Optional)</label>
-                <input
-                  type="text"
-                  name="remarks"
-                  value={formData.remarks}
-                  onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
-                  className="input-field"
-                  placeholder="Add any notes..."
-                />
-              </div>
-
-              <button 
-                type="submit" 
-                className="btn btn-primary"
-                disabled={marking}
-              >
-                {marking ? 'Marking...' : 'Mark Attendance'}
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* Stats Cards */}
         {stats && (
           <div className="grid grid-2 mt-3">
             <div className="stat-card">

@@ -9,7 +9,7 @@ const AdminAttendance = () => {
     startDate: '',
     endDate: '',
     status: '',
-    userId: ''
+    rollNumber: ''
   });
 
   const fetchAttendance = useCallback(async () => {
@@ -19,7 +19,7 @@ const AdminAttendance = () => {
       if (filters.startDate) params.startDate = filters.startDate;
       if (filters.endDate) params.endDate = filters.endDate;
       if (filters.status) params.status = filters.status;
-      if (filters.userId) params.userId = filters.userId;
+      if (filters.rollNumber) params.rollNumber = filters.rollNumber;
 
       const response = await attendanceService.getAllAttendance(params);
       setAttendance(response.data.attendance);
@@ -50,7 +50,7 @@ const AdminAttendance = () => {
       startDate: '',
       endDate: '',
       status: '',
-      userId: ''
+      rollNumber: ''
     });
   };
 
@@ -179,14 +179,14 @@ const AdminAttendance = () => {
             </div>
 
             <div className="input-group">
-              <label className="input-label">Student ID</label>
+              <label className="input-label">Roll Number</label>
               <input
                 type="text"
-                name="userId"
-                value={filters.userId}
+                name="rollNumber"
+                value={filters.rollNumber}
                 onChange={handleFilterChange}
                 className="input-field"
-                placeholder="Enter student ID"
+                placeholder="Enter roll number"
               />
             </div>
           </div>

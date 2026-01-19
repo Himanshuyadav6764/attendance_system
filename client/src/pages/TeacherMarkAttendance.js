@@ -10,7 +10,17 @@ const TeacherMarkAttendance = () => {
   const [loading, setLoading] = useState(true);
   const [marking, setMarking] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  
+  // Get today's date in local timezone
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  const [selectedDate, setSelectedDate] = useState(getTodayDate());
 
   useEffect(() => {
     fetchStudents();
@@ -145,7 +155,7 @@ const TeacherMarkAttendance = () => {
               <input 
                 type="date" 
                 value={selectedDate}
-                max={new Date().toISOString().split('T')[0]}
+                max={getTodayDate()}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="input-field"
               />

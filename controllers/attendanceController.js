@@ -1,16 +1,13 @@
 const Attendance = require('../models/Attendance');
 
-// Student marks their attendance for today (can only mark once per day)
 exports.markAttendance = async (req, res) => {
   try {
     const { status, remarks } = req.body;
     const studentId = req.user._id;
 
-    // Get today's date at midnight (so all attendance for same day matches)
     const todayDate = new Date();
     todayDate.setHours(0, 0, 0, 0);
 
-    // Check if student already marked attendance today
     const alreadyMarked = await Attendance.findOne({
       user: studentId,
       date: todayDate
@@ -19,20 +16,18 @@ exports.markAttendance = async (req, res) => {
     if (alreadyMarked) {
       return res.status(400).json({
         success: false,
-        message: 'You have already marked attendance for today!'
+        message: 'Attendance already marked for today'
       });
     }
 
-    // Save the attendance record
     const attendanceRecord = await Attendance.create({
       user: studentId,
       date: todayDate,
-      status: status || 'present', // Default to 'present' if not specified
+      status: status || 'present',
       remarks,
-      checkInTime: new Date() // Exact time when they marked attendance
+      checkInTime: new Date()
     });
 
-    // Add student details to the response
     await attendanceRecord.populate('user', 'name email rollNumber');
 
     res.status(201).json({
@@ -43,49 +38,44 @@ exports.markAttendance = async (req, res) => {
   } catch (error) {
     console.error('Failed to mark attendance:', error);
     
-    // Just in case duplicate entry error happens
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
-        message: 'You have already marked attendance for today!'
+        message: 'Attendance already marked for today'
       });
     }
 
     res.status(500).json({
       success: false,
-      message: 'Failed to mark attendance. Please try again',
+      message: 'Failed to mark attendance',
       error: error.message
     });
   }
 };
 
-// Get student's own attendance history
 exports.getMyAttendance = async (req, res) => {
   try {
     const studentId = req.user._id;
     const { startDate, endDate, limit = 30 } = req.query;
 
-    // Start building our search query
     let searchQuery = { user: studentId };
 
-    // Add date range filter if user wants specific dates
     if (startDate || endDate) {
       searchQuery.date = {};
       if (startDate) {
-        searchQuery.date.$gte = new Date(startDate); // From this date onwards
+        searchQuery.date.$gte = new Date(startDate);
       }
       if (endDate) {
-        searchQuery.date.$lte = new Date(endDate); // Up to this date
+        searchQuery.date.$lte = new Date(endDate);
       }
     }
 
-    // Get attendance records (newest first)
     const attendanceRecords = await Attendance.find(searchQuery)
-      .sort({ date: -1 }) // Show newest dates first
-      .limit(parseInt(limit)) // Don't load too many records at once
+      .sort({ date: -1 })
+      .limit(parseInt(limit))
       .populate('user', 'name email rollNumber');
 
-    // Calculate some useful statistics
+    const statistics = {
     const statistics = {
       total: attendanceRecords.length,
       present: attendanceRecords.filter(record => record.status === 'present').length,
@@ -105,24 +95,52 @@ exports.getMyAttendance = async (req, res) => {
     console.error('Failed to get attendance:', error);
     res.status(500).json({
       success: false,
-      message: 'Could not load attendance records. Please try again',
+      message: 'Failed to load attendance records',
       error: error.message
     });
   }
 };
 
-// Teacher can view all students' attendance records
 exports.getAllAttendance = async (req, res) => {
   try {
-    const { startDate, endDate, userId, status, limit = 100, page = 1 } = req.query;
+    const { startDate, endDate, userId, rollNumber, status, limit = 100, page = 1 } = req.query;
 
-    // Build search query based on what Teacher wants to filter
     let searchQuery = {};
+    const User = require('../models/User');
 
-    // If user is Teacher, filter by their department only
-    if (req.user.role === 'teacher') {
-      // Find all users in the same department
-      const User = require('../models/User');
+    if (rollNumber) {
+      const trimmedRollNumber = String(rollNumber).trim();
+      console.log('Searching for roll number:', trimmedRollNumber);
+      
+      const queryConditions = { 
+        role: 'student',
+        rollNumber: trimmedRollNumber
+      };
+      
+      if (req.user.role === 'teacher') {
+        queryConditions.department = req.user.department;
+        console.log('Teacher department:', req.user.department);
+      }
+      
+      console.log('Query conditions:', queryConditions);
+      
+      const matchingStudent = await User.findOne(queryConditions);
+      
+      console.log('Matching student:', matchingStudent ? matchingStudent.name + ' - ' + matchingStudent.rollNumber : 'Not found');
+      
+      if (matchingStudent) {
+        searchQuery.user = matchingStudent._id;
+      } else {
+        return res.json({
+          success: true,
+          count: 0,
+          total: 0,
+          page: parseInt(page),
+          pages: 0,
+          data: { attendance: [] }
+        });
+      }
+    } else if (req.user.role === 'teacher') {
       const departmentStudents = await User.find({
         department: req.user.department,
         role: 'student'
@@ -132,12 +150,10 @@ exports.getAllAttendance = async (req, res) => {
       searchQuery.user = { $in: studentIds };
     }
 
-    // Filter by specific student if needed
     if (userId) {
       searchQuery.user = userId;
     }
 
-    // Filter by attendance status (present/absent/late)
     if (status) {
       searchQuery.status = status;
     }
@@ -153,17 +169,14 @@ exports.getAllAttendance = async (req, res) => {
       }
     }
 
-    // Calculate which records to skip for pagination
     const recordsToSkip = (parseInt(page) - 1) * parseInt(limit);
 
-    // Get attendance records with pagination
     const attendanceRecords = await Attendance.find(searchQuery)
-      .sort({ date: -1 }) // Newest first
-      .skip(recordsToSkip) // Skip previous pages
-      .limit(parseInt(limit)) // How many per page
+      .sort({ date: -1 })
+      .skip(recordsToSkip)
+      .limit(parseInt(limit))
       .populate('user', 'name email rollNumber department');
 
-    // Count total records matching the filter
     const totalRecords = await Attendance.countDocuments(searchQuery);
 
     res.json({
@@ -171,14 +184,14 @@ exports.getAllAttendance = async (req, res) => {
       count: attendanceRecords.length,
       total: totalRecords,
       page: parseInt(page),
-      pages: Math.ceil(totalRecords / parseInt(limit)), // Total pages
+      pages: Math.ceil(totalRecords / parseInt(limit)),
       data: { attendance: attendanceRecords }
     });
   } catch (error) {
     console.error('Failed to get all attendance:', error);
     res.status(500).json({
       success: false,
-      message: 'Could not load attendance records. Please try again',
+      message: 'Failed to load attendance records',
       error: error.message
     });
   }

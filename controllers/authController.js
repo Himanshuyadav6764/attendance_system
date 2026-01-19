@@ -1,15 +1,13 @@
 const User = require('../models/User');
-const TeacherId = require('../models/HodId'); // Will rename model file later
+const TeacherId = require('../models/HodId');
 const jwt = require('jsonwebtoken');
 
-// Create a login token for the user (like a temporary ID card that expires)
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '7d' // Token valid for 7 days
+    expiresIn: process.env.JWT_EXPIRE || '7d'
   });
 };
 
-// Validate Teacher ID - Check if it exists in ids collection
 exports.validateTeacherId = async (req, res) => {
   try {
     const { teacherId } = req.body;
@@ -21,15 +19,13 @@ exports.validateTeacherId = async (req, res) => {
       });
     }
 
-    // Check if Teacher ID exists in ids collection
     const existingTeacherId = await TeacherId.findOne({ hodId: teacherId.trim() });
 
     if (existingTeacherId) {
-      // Check if already registered
       if (existingTeacherId.isRegistered) {
         return res.status(400).json({
           success: false,
-          message: 'This Teacher ID is already registered. Please login instead.',
+          message: 'This Teacher ID is already registered',
           data: {
             valid: false,
             alreadyRegistered: true
@@ -49,7 +45,7 @@ exports.validateTeacherId = async (req, res) => {
     } else {
       return res.status(404).json({
         success: false,
-        message: 'Invalid Teacher ID. Please contact admin for correct Teacher ID.',
+        message: 'Invalid Teacher ID',
         data: {
           valid: false
         }
@@ -64,40 +60,35 @@ exports.validateTeacherId = async (req, res) => {
   }
 };
 
-// Handle new user registration (signup)
 exports.register = async (req, res) => {
   try {
     const { name, email, password, role, rollNumber, department } = req.body;
 
-    // Make sure user filled in all required fields - email and password for both roles
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide your email and password'
+        message: 'Email and password are required'
       });
     }
 
-    // For students, name is required
     if (role === 'student' && !name) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide your name'
+        message: 'Name is required for students'
       });
     }
 
-    // Validate role
     if (role && !['student', 'teacher'].includes(role)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid role. Must be either student or teacher'
+        message: 'Invalid role'
       });
     }
 
-    // Check required fields based on role
     if (role === 'student' && !rollNumber) {
       return res.status(400).json({
         success: false,
-        message: 'Roll number is required for student registration'
+        message: 'Roll number is required for students'
       });
     }
 
