@@ -13,7 +13,20 @@ const teacherRoutes = require('./routes/hodRoutes');
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:3000', process.env.CLIENT_URL].filter(Boolean),
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:5000',
+      process.env.CLIENT_URL,
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null
+    ].filter(Boolean);
+    
+    if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.includes('vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -38,7 +51,12 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     message: 'Server is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    env: {
+      nodeEnv: process.env.NODE_ENV,
+      hasMongoUri: !!process.env.MONGO_URI,
+      hasJwtSecret: !!process.env.JWT_SECRET
+    }
   });
 });
 

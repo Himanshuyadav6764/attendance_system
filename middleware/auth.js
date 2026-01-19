@@ -1,56 +1,58 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Check if user is logged in (verify their login token)
 exports.authenticate = async (req, res, next) => {
   try {
-    // Get the login token from request header
     const authHeader = req.headers.authorization;
     
-    // Make sure token is provided
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
-        message: 'Please log in first. No login token found'
+        message: 'Authentication required'
       });
     }
 
-    // Extract the actual token (remove "Bearer " prefix)
     const loginToken = authHeader.split(' ')[1];
 
-    // Verify if the token is valid and not tampered with
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET not configured');
+      return res.status(500).json({
+        success: false,
+        message: 'Server configuration error'
+      });
+    }
+
     const decodedToken = jwt.verify(loginToken, process.env.JWT_SECRET);
 
-    // Get user details from database using token info
     const currentUser = await User.findById(decodedToken.id).select('-password');
     
     if (!currentUser) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid login token. User not found'
+        message: 'User not found'
       });
     }
 
-    // Save user info in request so other functions can use it
     req.user = currentUser;
-    next(); // Continue to next function
+    next();
   } catch (error) {
-    // Handle different types of token errors
+    console.error('Authentication error:', error.message);
+    
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
         success: false,
-        message: 'Invalid login token'
+        message: 'Invalid token'
       });
     }
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
-        message: 'Your session has expired. Please log in again'
+        message: 'Session expired'
       });
     }
     res.status(500).json({
       success: false,
-      message: 'Something went wrong while checking login'
+      message: 'Authentication failed'
     });
   }
 };

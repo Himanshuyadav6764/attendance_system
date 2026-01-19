@@ -247,81 +247,80 @@ exports.register = async (req, res) => {
   }
 };
 
-// Handle user login
 exports.login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
 
-    // Make sure they entered both email/Teacher ID and password
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please enter both email/Teacher ID and password'
+        message: 'Email and password are required'
       });
     }
 
-    // For Teacher: login with Teacher ID only
-    // For Student: login with email
     let user;
     if (role === 'teacher') {
-      // Teacher login - check password from TeacherId collection
       const teacherIdToSearch = email.trim();
       const teacherIdRecord = await TeacherId.findOne({ hodId: teacherIdToSearch }).select('+password');
       
       console.log('Teacher Login attempt:', { teacherIdToSearch, teacherIdRecordFound: !!teacherIdRecord });
       
-      if (!teacherIdRecord || !teacherIdRecord.password) {
+      if (!teacherIdRecord) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid Teacher ID or password'
+          message: 'Invalid credentials'
         });
       }
 
-      // Check if the password matches from TeacherId collection
+      if (!teacherIdRecord.password) {
+        console.error('Teacher ID found but no password set');
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid credentials'
+        });
+      }
+
       const isPasswordCorrect = await teacherIdRecord.comparePassword(password);
       if (!isPasswordCorrect) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid Teacher ID or password'
+          message: 'Invalid credentials'
         });
       }
 
-      // Get user details from User collection
       user = await User.findOne({ teacherId: teacherIdToSearch, role: 'teacher' });
       
       if (!user) {
+        console.error('Teacher ID authenticated but user not found');
         return res.status(401).json({
           success: false,
-          message: 'Invalid Teacher ID or password'
+          message: 'Invalid credentials'
         });
       }
     } else {
-      // Student login - search by email
       user = await User.findOne({ email: email, role: 'student' }).select('+password');
       
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid email or password'
+          message: 'Invalid credentials'
         });
       }
 
-      // Check if the password matches
       const isPasswordCorrect = await user.comparePassword(password);
       if (!isPasswordCorrect) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid email or password'
+          message: 'Invalid credentials'
         });
       }
     }
 
-    // Give them a login token
     const loginToken = generateToken(user._id);
 
     res.json({
       success: true,
-      message: 'Login successful! Welcome back!',
+      message: 'Login successful',
       data: {
         user: {
           id: user._id,
@@ -336,11 +335,11 @@ exports.login = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Login failed:', error);
+    console.error('Login error:', error);
     res.status(500).json({
       success: false,
-      message: 'Login failed. Please try again',
-      error: error.message
+      message: 'Server error during login',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 };
